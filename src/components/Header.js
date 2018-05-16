@@ -44,7 +44,6 @@ const styles = {
     },
     contenedorBoton: {
         width: 70,
-        backgroundColor: '#0000',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 12
