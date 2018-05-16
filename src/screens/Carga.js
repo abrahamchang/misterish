@@ -3,6 +3,9 @@ import { View, Text, Image } from 'react-native';
 import firebase from 'firebase';
 
 const Carga = () => {
+
+    const { ventanaStyle, logoStyle, contenedorImagen, contenedorTexto, textoStyle, rellenoStyle } = styles;
+
     const config = {
         apiKey: "AIzaSyCwzC4NGYv4QuOb6lMtFI1NNFIfR0N4L8E",
         authDomain: "misterish-2078a.firebaseapp.com",
@@ -13,34 +16,61 @@ const Carga = () => {
     };
     firebase.initializeApp(config);
 
-    return(
-        <View style={styles.contenedorStyle}>
-            <Image source={require('../assets/icons8-trabajador-con-barricada-filled-100.png')} />
-            <Text style={styles.tituloStyle}>Misterish</Text>
-            <Text style={styles.subtituloStyle}>Disculpe. Estamos trabajando para usted, vuelva pronto.</Text>
+
+
+    return (
+        <View style={ventanaStyle}>
+            <View style={rellenoStyle} />
+            
+            <View style={contenedorImagen}>
+                <Image
+                    source={require('../assets/Logo.png')}
+                    style={logoStyle}
+                />
+            </View>
+
+            <View style={contenedorTexto}>
+                <Text style={textoStyle}>Misterish</Text>
+            </View>
+
+            <View style={rellenoStyle} />
         </View>
     );
 };
 
 const styles = {
-    tituloStyle: {
-        color: 'white',
-        fontSize: 30,
-        borderWidth: 10,
-        borderColor: 'transparent',
-        textAlign: 'center',
-        textAlignVertical: 'bottom'
-    },
-    subtituloStyle: {
-        color: 'white',
-        fontSize: 15,
-        textAlign: 'center'
-    },
-    contenedorStyle: {
-        backgroundColor: '#381e61',
-        justifyContent: 'center',
+    ventanaStyle: {
+        backgroundColor: '#715696',
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column'
+
+    },
+    rellenoStyle: {
         flex: 1
+    },
+    logoStyle: {
+        resizeMode: 'contain',
+        flex: 1
+
+    },
+    contenedorImagen: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1
+         
+    },
+    contenedorTexto: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1
+
+    },
+    textoStyle: {
+        color: 'white',
+        fontSize: 36
+
     }
 };
 
