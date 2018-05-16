@@ -53,7 +53,6 @@ const styles = {
     logoStyle: {
         resizeMode: 'contain',
         flex: 1
-
     },
     contenedorImagen: {
         alignItems: 'center',
