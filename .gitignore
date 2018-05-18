@@ -1,4 +1,5 @@
 node_modules/**/*
+Keys.js/*
 .expo/*
 npm-debug.*
 ZCHANG/*
