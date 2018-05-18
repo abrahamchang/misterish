@@ -26,10 +26,10 @@ const styles = {
         flex: 1
     },
     ventanaStyle: {
-        backgroundColor: '#715696',
+        backgroundColor: '#36175E',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 70,
+        height: 65,
         paddingTop: 20,
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: 2 },
@@ -39,7 +39,7 @@ const styles = {
         flexDirection: 'row'
     },
     textoStyle: {
-        fontSize: 22,
+        fontSize: 20,
         color: 'white'
     },
     contenedorBoton: {

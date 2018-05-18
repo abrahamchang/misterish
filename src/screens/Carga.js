@@ -40,7 +40,7 @@ const Carga = () => {
 
 const styles = {
     ventanaStyle: {
-        backgroundColor: '#715696',
+        backgroundColor: '#36175E',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',

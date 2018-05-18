@@ -34,8 +34,8 @@ const styles = {
         padding: 12
     },
     ventanaStyle: {
-        backgroundColor: '#715696',
-        height: 65,
+        backgroundColor: '#36175E',
+        height: 50,
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
