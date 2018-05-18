@@ -15,15 +15,15 @@ class Router extends Component {
 const Navigator = createStackNavigator({
     loading: {
         screen: Loading,
-        navigationOptions: {
-            header: null
-        }
     },
-    home: {
-        screen: Home,
-        navigationOptions: {
-            header: null
+    home: createBottomTabNavigator({
+        home: {
+            screen: Home
         }
+    })
+}, {
+    navigationOptions: {
+        header: null
     }
 });
 
