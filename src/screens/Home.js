@@ -8,7 +8,7 @@ class Home extends Component {
     render() {
         return (
             <View>
-                <Header />
+                <Header tituloHeader='Misterish' />
                 <MisteryList />
             </View>
         );
