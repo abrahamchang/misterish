@@ -1,8 +1,24 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
-
+import firebase from 'firebase'
+import config from '../../Keys'
 
 class Loading extends Component {
+    
+
+    getItem(item){
+        return firebase.database().ref(item).once("value");
+    }
+
+    componentDidMount(){
+        firebase.initializeApp(config);
+        this.getItem("misteryMetadata").then((result)=>{
+            console.log(result.val());
+        }).catch((err)=>{
+            console.log(err);
+        });
+    }
+
 
     render() {
         const { ventanaStyle, rellenoStyle, contenedorTexto, logoStyle, textoStyle, contenedorImagen } = styles;
