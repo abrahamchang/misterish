@@ -14,7 +14,7 @@ class Loading extends Component {
     componentDidMount(){
         firebase.initializeApp(config);
         this.getItem("misteryMetadata").then((result)=>{
-            console.log(result.val());
+            //TODO LOGIC TO SEND THE MISTERIES TO THE MAIN SCREEN
         }).catch((err)=>{
             console.log(err);
         });
