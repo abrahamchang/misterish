@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "misterish",
+    "name": "Misterish",
     "description": "This project is really great.",
     "slug": "misterish",
     "privacy": "public",
@@ -8,7 +8,7 @@
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icons8-trabajador-con-barricada-filled-100.png",
+    "icon": "./src/assets/Developing.png",
     "splash": {
       "image": "./src/assets/splash.png",
       "resizeMode": "contain",
