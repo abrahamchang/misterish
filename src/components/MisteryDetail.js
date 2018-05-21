@@ -5,58 +5,56 @@ import CardSection from './common/CardSection';
 
 const MisteryDetail = ({ misterio }) => {
 
-    const { name, body } = misterio;
-    const { contenedorImagen, contenedorHeader, imagenStyle, tituloStyle, descripcionStyle } = style;
+    //const { name, body } = misterio;
+    const { ventanaStyle, contenedorImagen, contenedorTexto, imagenStyle, textoStyle } = style;
 
     return (
-        <View style={{ padding: 5 }}>
-            <CardSection>
-                <View style={contenedorImagen}>
-                    <Image 
+        <View style={ventanaStyle}>
+            <View style={contenedorImagen}>
+                <Image
+                    source={require('../assets/LogoC.png')}
                     style={imagenStyle}
-                    source={require('../assets/gatito.png')}
-                    />
-                </View>
-
-                <View style={contenedorHeader}>
-                    <Text style={tituloStyle}>
-                        Misterio titulo misterio
-                    </Text>
-                    <Text style={descripcionStyle}>
-                        Descripcion del misterio descripcion del misterio.
-                    </Text>
-                </View>
-            </CardSection>
+                />
+            </View>
+            <View style={contenedorTexto}>
+                <Text style={textoStyle}>   El titulo del misterio</Text>
+                <Text style={textoStyle}>66%</Text>
+            </View>
         </View>
     );
 
 };
 
 const style = {
-    contenedorImagen: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 5,
-        marginRight: 5
-    },
-    contenedorHeader: {
+    ventanaStyle: {
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        margin: '1%',
+        width: '48%',
+        aspectRatio: 1 / 1,
         flexDirection: 'column',
-        justifyContent: 'space-around'
+        justifyContent: 'center'
+    },
+    contenedorImagen: {
+        flex: 3,
+        alignItems: 'center',
+        marginTop: '10%'
+    },
+    contenedorTexto: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     imagenStyle: {
-        height: 60,
-        width: 60
+        resizeMode: 'contain',
+        flex: 1
     },
-    tituloStyle: {
-        fontSize: 16,
-        fontWeight: 'bold',
+    textoStyle: {
         color: 'white',
-
-    },
-    descripcionStyle: {
-        fontSize: 12,
-        color: 'white',
+        textAlign: 'center'
     }
+
+
 }
 
 export default MisteryDetail;

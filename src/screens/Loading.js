@@ -5,8 +5,10 @@ import config from '../../Keys'
 
 
 class Loading extends Component {
+  
     getItem(item) {
         return firebase.database().ref(item).once("value");
+
     }
 
     componentDidMount() {
