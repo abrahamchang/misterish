@@ -51,13 +51,11 @@ const style = {
         fontSize: 16,
         fontWeight: 'bold',
         color: 'white',
-        fontFamily: 'notoserif'
 
     },
     descripcionStyle: {
         fontSize: 12,
         color: 'white',
-        fontFamily: 'notoserif'
     }
 }
 
