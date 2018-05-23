@@ -44,7 +44,7 @@ class Home extends Component {
         if (!this.state.loading) {
             this.prepareMisteries();
             return (
-                <View style={{ marginBottom: 50, backgroundColor: '#553285' }}>
+                <View style={{ backgroundColor: '#553285' }}>
                     <FlatList
                         numColumns={2}
                         data={this.state.misteries}

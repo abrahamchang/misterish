@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import { createStackNavigator } from 'react-navigation';
+import { View, Text, Image } from 'react-native';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import Loading from './src/screens/Loading';
 import Developing from './src/screens/Developing';
@@ -30,23 +30,52 @@ const Navigator = createStackNavigator(
                 header: null
             }
         },
-        Root: createStackNavigator(
+        Root: createBottomTabNavigator(
             {
                 Profile: {
-                    screen: Developing
+                    screen: Developing,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./src/assets/id-cardButton.png')}
+                                style={[styles.icon, { tintColor: tintColor }]}
+                            />
+                        )
+                    }
                 },
                 Home: {
-                    screen: Home
+                    screen: Home,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./src/assets/homeButton.png')}
+                                style={[styles.icon, { tintColor: tintColor }]}
+                            />
+                        )
+                    }
                 },
                 Settings: {
-                    screen: Developing
+                    screen: Developing,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./src/assets/settingsButton.png')}
+                                style={[styles.icon, { tintColor: tintColor }]}
+                            />
+                        )
+                    }
                 }
             },
             {
                 initialRouteName: 'Home',
-                navigationOptions: {
-                    header: <MenuBar />,
+                tabBarOptions: {
+                    showLabel: false,
+                    activeTintColor: 'white',
+                    activeBackgroundColor: 'rgba(54, 23, 94, 0.8)',
+                    inactiveTintColor: 'white',
+                    inactiveBackgroundColor: '#36175E'
                 }
+
             }
         )
     },
@@ -57,5 +86,12 @@ const Navigator = createStackNavigator(
         }
     }
 );
+
+const styles = {
+    icon: {
+        width: 26,
+        height: 26,
+    }
+}
 
 export { Router };
