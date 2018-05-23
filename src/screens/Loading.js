@@ -1,36 +1,40 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase'
 import config from '../../Keys'
 
 
 class Loading extends Component {
-    
-
-    getItem(item){
+  
+    getItem(item) {
         return firebase.database().ref(item).once("value");
     }
 
-    componentDidMount(){
+    componentDidMount() {
         firebase.initializeApp(config);
-        this.getItem("misteryMetadata").then((result)=>{
-            console.log(result.val());
-        }).catch((err)=>{
+        this.getItem('/misteryMetadata').then((result) => {
+            const datos = result.val();
+            const resetAction = StackActions.reset({
+               index: 0,
+               actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+            });
+            this.props.navigation.dispatch(resetAction);
+        }).catch((err) => {
             console.log(err);
         });
     }
 
-
     render() {
         const { ventanaStyle, rellenoStyle, contenedorTexto, logoStyle, textoStyle, contenedorImagen } = styles;
-        this.algo();
+
         return (
             <View style={ventanaStyle}>
-                <View style={rellenoStyle}/>
+                <View style={rellenoStyle} />
 
                 <View style={contenedorImagen}>
                     <Image
-                        source={require('../assets/Logo.png')}
+                        source={require('../assets/LogoC.png')}
                         style={logoStyle}
                     />
                 </View>
@@ -39,17 +43,10 @@ class Loading extends Component {
                     <Text style={textoStyle}>Misterish</Text>
                 </View>
 
-                <View style={rellenoStyle}/>
+                <View style={rellenoStyle} />
             </View>
         );
     }
-
-    algo() {
-        setTimeout(() => {
-            this.props.navigation.navigate('home');
-        }, 1000);
-    }
-
 }
 
 const styles = {

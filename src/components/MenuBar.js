@@ -1,26 +1,28 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, TouchableOpacity, Image, Button } from 'react-native';
 
-const MenuBar = () => {
+class MenuBar extends Component {
 
+render(){
     const { ventanaStyle, contenedorBoton, botonesStyle } = styles;
-
     return (
-        <View style={ventanaStyle}>
-            <TouchableOpacity style={contenedorBoton}>
+        <View style={ventanaStyle}> 
+            <TouchableOpacity style={contenedorBoton} /*onPress={this.props.navigation.navigate('Home')}*/>
                 <Image style={botonesStyle} source={require('../assets/id-cardButton.png')} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={contenedorBoton}>
+            <TouchableOpacity style={contenedorBoton} /*onPress={this.props.navigation.navigate('Home')}*/>
                 <Image style={botonesStyle} source={require('../assets/homeButton.png')} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={contenedorBoton}>
+            <TouchableOpacity style={contenedorBoton} /*onPress={this.props.navigation.navigate('Settings')}*/>
                 <Image style={botonesStyle} source={require('../assets/settingsButton.png')} />
             </TouchableOpacity>
         </View>
     );
-};
+}
+}
+
 
 const styles = {
     botonesStyle: {

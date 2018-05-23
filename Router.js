@@ -1,38 +1,101 @@
 import React, { Component } from 'react';
-import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
+import { View, Text, Image } from 'react-native';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import Loading from './src/screens/Loading';
-import Settings from './src/screens/Settings';
-import Profile from './src/screens/Profile';
+import Developing from './src/screens/Developing';
 import { Home } from './src/screens/Home';
+import Scanner from './src/screens/Scanner';
+import Header from './src/components/Header';
 
 class Router extends Component {
     render() {
         return (
-            <Navigator />
+            <View style={{ flex: 1 }}>
+                <Navigator />
+            </View>
         );
     }
+
 }
 
-const Navigator = createStackNavigator({
-    loading: {
-        screen: Loading,
-    },
-    home: createBottomTabNavigator({
-        profile: {
-            screen: Profile
+const Navigator = createStackNavigator(
+    {
+        Loading: {
+            screen: Loading,
+            navigationOptions: {
+                header: null
+            }
         },
-        home: {
-            screen: Home
-        },
-        settings: {
-            screen: Settings
+        Root: createBottomTabNavigator(
+            {
+                Profile: {
+                    screen: Developing,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./src/assets/id-cardButton.png')}
+                                style={[styles.icon, { tintColor: tintColor }]}
+                            />
+                        )
+                    }
+                },
+                Home: {
+                    screen: Home,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./src/assets/homeButton.png')}
+                                style={[styles.icon, { tintColor: tintColor }]}
+                            />
+                        )
+                    }
+                },
+                Settings: {
+                    screen: Developing,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./src/assets/settingsButton.png')}
+                                style={[styles.icon, { tintColor: tintColor }]}
+                            />
+                        )
+                    }
+                },
+            },
+            {
+                initialRouteName: 'Home',
+                backBehavior: false,
+                tabBarOptions: {
+                    showLabel: false,
+                    activeTintColor: 'white',
+                    activeBackgroundColor: 'rgba(54, 23, 94, 0.8)',
+                    inactiveTintColor: 'white',
+                    inactiveBackgroundColor: '#36175E'
+                }
+            }
+        ),
+        Scanner: {
+            screen: Scanner,
+            navigationOptions: {
+                header: null,
+                gesturesEnabled: false
+            }
         }
-    })
-}, {
-    navigationOptions: {
-        header: null
+    },
+    {
+        initialRouteName: 'Loading',
+        navigationOptions: {
+            header: <Header tituloHeader='Misterish' />
+        }
     }
-});
+);
 
-export { Router }
+const styles = {
+    icon: {
+        width: 26,
+        height: 26,
+    }
+};
+
+export { Router };
