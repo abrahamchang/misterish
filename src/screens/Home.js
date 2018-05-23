@@ -3,6 +3,7 @@ import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import firebase from 'firebase';
 
+
 import MisteryDetail from '../components/MisteryDetail';
 import config from '../../Keys'
 
@@ -22,29 +23,24 @@ class Home extends Component {
         }).catch((err) => {
             console.log(err);
         });*/
-
         axios.get('https://jsonplaceholder.typicode.com/comments?postId=1')
             .then(response => {
                 this.setState({ misteries: response.data, loading: false })
-                //console.log(this.state.misteries);
-            }
+                }
             );
-
     }
-
+/*
     prepareMisteries() {
-        //console.log(this.state.misteries);
         const algo = this.state.misteries.map(mistery => {
             return mistery;
         });
         return algo;
     }
-
+*/
     render() {
         if (!this.state.loading) {
-            this.prepareMisteries();
             return (
-                <View style={{ backgroundColor: '#553285' }}>
+                <View style={{ flex: 1, backgroundColor: '#553285' }}>
                     <FlatList
                         numColumns={2}
                         data={this.state.misteries}
