@@ -4,8 +4,10 @@ import { Text,
 		View,
 		Animated,
 		PanResponder,
-		Dimensions
- } from 'react-native';		
+		Dimensions,
+ } from 'react-native';	
+ import { CheckBox, Button } from 'react-native-elements'	
+
  /* eslint-enable no-unused-vars */
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -20,7 +22,8 @@ export default class Notepad extends Component {
 
 	constructor(props) {
 		super(props);
-	
+		const checked = true;
+		const unchecked = false;
 		const position = new Animated.ValueXY({x: 0, y: SCREEN_HEIGHT - SCREEN_HEIGHT*0.075});
 		const panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: () => true,
@@ -36,40 +39,86 @@ export default class Notepad extends Component {
 			}
 
 		});
-		this.state = { panResponder, position };
+		this.state = { panResponder, position, checked, unchecked };
 	}
 
+
 	renderClue(item){
-		return ( //Modificar los clues aqui
-				<Text style={styles.padText} key={item.id}>{item.clue}</Text>
+		if(item.id < this.props.index){
+			return ( //Modificar los clues aqui
+			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
+			key={item.id}
+			left
+			checked= {this.state.checked}
+			title={item.clue}
+			iconLeft
+			iconType='material'
+			checkedIcon='done'
+			uncheckedIcon='search'
+			uncheckedColor='gray'
+			checkedColor='purple'
+			checked={this.state.checked}
+			containerStyle={{padding: 3}}
+			textStyle={{flexWrap: "wrap"}}
+			/>
 			);
+		}else if (item.id === this.props.index){
+			return(
+			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
+			key={item.id}
+			left
+			checked= {this.state.checked}
+			title={item.clue}
+			iconLeft
+			iconType='material'
+			checkedIcon='done'
+			uncheckedIcon='search'
+			uncheckedColor='gray'
+			checkedColor='purple'
+			checked={this.state.unchecked}
+			containerStyle={{padding: 3}}
+			textStyle={{flexWrap: "wrap"}}
+			/>
+			)
+		}
 	}
 
 	renderNotepad(){
 		return this.props.clues.map(item =>{
-			return this.renderClue(item);
-		});
+				return this.renderClue(item);
+			}	);
 	}
 
 	render() {
 		return (
 			<Animated.View
-			    style={this.state.position.getLayout()}
-    			{...this.state.panResponder.panHandlers}
+				style={this.state.position.getLayout()}
+				{...this.state.panResponder.panHandlers}
 			>
                 <View style={styles.tab}>
-				    <Text style={styles.tabText}>^</Text>
+					<Text style={styles.tabText}>^</Text>
 				</View>
 				<View style={styles.pad}>
 					{this.renderNotepad()}
+					<Button 
+					raised
+					iconRight={{name: 'exit-to-app'}}
+					title='Get me out!'
+					containerViewStyle={styles.buttonContainerStyle}
+					backgroundColor= '#ff0000'
+					borderRadius={5}
+					onPress={this.props.exitToApp}
+					/>
 				</View>
 			</Animated.View>
 		);
 	}
 
+
+
 	onSwipeUp(){
 		Animated.spring(this.state.position, {
-			toValue: {x: 0, y: SCREEN_HEIGHT*0.5}
+			toValue: {x: 0, y: SCREEN_HEIGHT*0.40}
 		}).start();
 	}
 
@@ -82,6 +131,13 @@ export default class Notepad extends Component {
 }
 
 const styles = {
+	buttonContainerStyle: {
+		borderRadius: 5,
+		margin:NOTEPAD_WIDTH*0.025,
+		position: 'absolute',
+		bottom: 0,
+		width: NOTEPAD_WIDTH*0.90,
+	},
 	tab: {
 		borderTopRightRadius: 40,
 		borderTopLeftRadius: 40,
@@ -92,7 +148,6 @@ const styles = {
 		height: SCREEN_HEIGHT*0.075,
 	},
 	pad: {
-		padding: SCREEN_WIDTH*0.05,
 		borderRadius: 10,
 		marginLeft: SCREEN_WIDTH*0.05,
 		marginRight: SCREEN_WIDTH*0.05,
@@ -103,11 +158,18 @@ const styles = {
 	tabText: {
 		textAlign: 'center',
 		fontSize: 50,
-		color: '#9900ff'
+		color: '#553285'
 	},
 	padText: {
 		fontSize: 16,
-        borderBottomWidth: 2,
-        borderBottomColor: '#0000ff'
+	},
+	notepadLines:{
+		width: '100%',
+        borderBottomWidth: 1,
+        borderBottomColor: '#66ccff',
+	},
+	leftMarginColor:{
+		borderLeftColor: '#ff0000',
+        borderLeftWidth: 2,
 	},
 };

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import firebase from 'firebase';
 import { BarCodeScanner, Camera, Permissions } from 'expo';
-
+import { StackActions, NavigationActions } from 'react-navigation';
 import Notepad from '../components/Notepad';
 
 class CameraScanner extends Component {
@@ -20,8 +20,6 @@ class CameraScanner extends Component {
 
     findClues() {
         const index = this.props.navigation.state.params;
-        console.log(this.props.navigation.state);
-        debugger;
         firebase.database().ref(`/misteryClues/${index}`).once('value')
             .then((snapshotClues) => {
                 const clues = snapshotClues.val();
@@ -32,6 +30,27 @@ class CameraScanner extends Component {
                 console.error(error);
             })
     }
+
+    getMeOut(){
+        Alert.alert(
+        'Salir',
+        'Esta seguro que desea salir del misterio?\n Su progreso se perdera.',
+        [
+            {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+            {text: 'OK', onPress: () => {
+                const resetItems = StackActions.reset({
+                index: 0,
+                actions: [{
+                type: 'Navigation/INIT',
+                routeName: 'Loading',
+           }]
+       });
+            }},
+        ],
+        { cancelable: true }
+    )
+        this.props.navigation.dispatch(resetItems);
+}
 
     render() {
         const { doIHaveCameraPermission } = this.state;
@@ -60,7 +79,7 @@ class CameraScanner extends Component {
             } else {
                 return (
                     <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                        <Notepad clues={this.state.clues} index={this.state.clueIndex}/>
+                        <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut}/>
                     </BarCodeScanner>
                 );
             }
@@ -68,8 +87,9 @@ class CameraScanner extends Component {
     }
 
     _handleBarCodeRead = ({ type, data }) => {
+        console.log(typeof type);
         const clue = this.state.clues[this.state.clueIndex];
-        if (type === 256) {
+        if (type === 256 || type === 'org.iso.QRCode') {
             if (clue.sol === data) {
                this.solvedClue();
             }
@@ -86,6 +106,7 @@ class CameraScanner extends Component {
 
         } else {
             this.setState({ clueIndex: index });
+            console.log("subi el index");
         }
     }
 }
