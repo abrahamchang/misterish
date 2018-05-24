@@ -12,7 +12,9 @@ class Loading extends Component {
     }
 
     componentDidMount() {
-        firebase.initializeApp(config);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
         this.getItem('/misteryMetadata').then((result) => {
             const datos = result.val();
             const resetAction = StackActions.reset({

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import firebase from 'firebase';
 import { BarCodeScanner, Camera, Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
+import Alert from '../components/Alert';
 import Modal from 'react-native-modal';
 import Notepad from '../components/Notepad';
 
@@ -13,7 +14,8 @@ class CameraScanner extends Component {
         clues: [],
         clueIndex: 0,
         GIF: false,
-        modalVisible: false
+        modalVisible: false,
+        victoria: false
     };
 
     async componentWillMount() {
@@ -68,10 +70,44 @@ class CameraScanner extends Component {
                             <Image style={styles.GIF} source={require('../assets/celebration.gif')}/>
                         </View>
                     );
+                } else if (this.state.victoria) {
+                    return (
+                        <Modal
+                            isVisible={true}
+                            backdropColor={'rgba(54,23,94,0.8)'}
+                            backdropOpacity={0.5}
+                        >
+                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                <Alert
+                                   title={'You did it!'}
+                                   text={'You completed the mistery!\nPress any button to continue'}
+                                   onPressOk={this.goHome.bind(this)}
+                                   onPressCancel={this.goHome.bind(this)}
+                               />
+                            </View>
+                        </Modal>
+                    );
+                } else if (this.state.modalVisible) {
+                    return (
+                        <Modal
+                            isVisible={this.state.modalVisible}
+                            backdropColor={'rgba(54,23,94,0.8)'}
+                            backdropOpacity={0.5}
+                        >
+                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                <Alert
+                                    title={'Exit'}
+                                    text={'Are you sure you want to leave?\nYou will lose your progress'}
+                                    onPressCancel={this.onPressCancel.bind(this)}
+                                    onPressOk={this.onPressOk.bind(this)}
+                                />
+                            </View>
+                        </Modal>
+                    );
                 } else {
                     return (
                         <BarCodeScanner style={{height: '100%', width: '100%'}} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut}/>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}/>
                         </BarCodeScanner>
                     );
                 }
@@ -91,9 +127,17 @@ class CameraScanner extends Component {
     goHome() {
         const resetAction = StackActions.reset({
             index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'Root' })]
+            actions: [NavigationActions.navigate({ routeName: 'Loading' })]
         });
-        navigation.dispatch(resetAction);
+        this.props.navigation.dispatch(resetAction);
+    }
+
+    onPressCancel() {
+        this.setState({ modalVisible: false });
+    }
+
+    onPressOk() {
+        this.goHome();
     }
 
     solvedClue() {
@@ -102,7 +146,7 @@ class CameraScanner extends Component {
         index++;
         if (index === this.state.clues.length) {
             // Se terminó, llamar modal y de modal a Loading
-
+            this.setState({ victoria: true });
         } else {
             this.setState({ clueIndex: index, GIF: true });
             setTimeout(() => this.setState({ GIF: false }), 6200);
