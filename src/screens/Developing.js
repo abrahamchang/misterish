@@ -17,7 +17,7 @@ render() {
         </View>
 
         <View style={contenedorTexto}>
-            <Text style={textoStyle}>Feature en desarrollo.</Text>
+            <Text style={textoStyle}>We're working on it. Hang tight!</Text>
         </View>
 
         <View style={rellenoStyle}/>
@@ -27,7 +27,7 @@ render() {
 
 const styles = {
     ventanaStyle: {
-        backgroundColor: '#f4f4f4',
+        backgroundColor: 'rgba(54,23,94,0.8)',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
