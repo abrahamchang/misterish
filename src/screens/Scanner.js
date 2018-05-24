@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import firebase from 'firebase';
-import { BarCodeScanner, Permissions } from 'expo';
-
+import { BarCodeScanner, Camera, Permissions } from 'expo';
+import { StackActions, NavigationActions } from 'react-navigation';
+import Modal from 'react-native-modal';
 import Notepad from '../components/Notepad';
 
 class CameraScanner extends Component {
@@ -11,16 +12,13 @@ class CameraScanner extends Component {
         cargando: true,
         clues: [],
         clueIndex: 0,
-        GIF: false
+        GIF: false,
+        modalVisible: false
     };
 
     async componentWillMount() {
         const { status } = await Permissions.askAsync(Permissions.CAMERA);
         this.setState({ doIHaveCameraPermission: status === 'granted' });
-    }
-
-    closeGIF() {
-        this.setState({ GIF: false });
     }
 
     findClues() {
@@ -33,6 +31,10 @@ class CameraScanner extends Component {
             .catch((error) => {
                 console.error(error);
             });
+    }
+
+    getMeOut() {
+        this.setState({ modalVisible: true });
     }
 
     render() {
@@ -69,7 +71,7 @@ class CameraScanner extends Component {
                 } else {
                     return (
                         <BarCodeScanner style={{height: '100%', width: '100%'}} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex}/>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut}/>
                         </BarCodeScanner>
                     );
                 }
@@ -77,18 +79,22 @@ class CameraScanner extends Component {
         }
     }
 
-    renderGIF() {
-
-    }
-
     _handleBarCodeRead = ({ type, data }) => {
         const clue = this.state.clues[this.state.clueIndex];
-        if (type === 256) {
+        if (type === 256 || type === 'org.iso.QRCode') {
             if (clue.sol === data) {
                this.solvedClue();
             }
         }
     };
+
+    goHome() {
+        const resetAction = StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'Root' })]
+        });
+        navigation.dispatch(resetAction);
+    }
 
     solvedClue() {
         // Indicador de que se resolvió, sonido o algo
