@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, View, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
 import { BarCodeScanner, Camera, Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -46,6 +46,7 @@ class CameraScanner extends Component {
             this.findClues();
             return (
                 <View style={styles.loadingView}>
+                    <ActivityIndicator size='large' color="#36175E"/>
                     <Text style={styles.loadingText}>Loading...</Text>
                 </View>
             );
@@ -67,7 +68,7 @@ class CameraScanner extends Component {
                 if (this.state.GIF) {
                     return (
                         <View style={styles.gifContainer}>
-                            <Image style={styles.GIF} source={require('../assets/celebration.gif')}/>
+                            <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
                         </View>
                     );
                 } else if (this.state.victoria) {
@@ -79,11 +80,11 @@ class CameraScanner extends Component {
                         >
                             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                 <Alert
-                                   title={'You did it!'}
-                                   text={'You completed the mistery!\nPress any button to continue'}
-                                   onPressOk={this.goHome.bind(this)}
-                                   onPressCancel={this.goHome.bind(this)}
-                               />
+                                    title={'You did it!'}
+                                    text={'You completed the mistery!\nPress any button to continue'}
+                                    onPressOk={this.goHome.bind(this)}
+                                    onPressCancel={this.goHome.bind(this)}
+                                />
                             </View>
                         </Modal>
                     );
@@ -106,8 +107,8 @@ class CameraScanner extends Component {
                     );
                 } else {
                     return (
-                        <BarCodeScanner style={{height: '100%', width: '100%'}} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}/>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)} />
                         </BarCodeScanner>
                     );
                 }
@@ -119,7 +120,7 @@ class CameraScanner extends Component {
         const clue = this.state.clues[this.state.clueIndex];
         if (type === 256 || type === 'org.iso.QRCode') {
             if (clue.sol === data) {
-               this.solvedClue();
+                this.solvedClue();
             }
         }
     };
