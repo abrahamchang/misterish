@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Text,
 		View,
 		Animated,
+		Image,
 		PanResponder,
 		Dimensions,
  } from 'react-native';	
@@ -24,11 +25,11 @@ export default class Notepad extends Component {
 		super(props);
 		const checked = true;
 		const unchecked = false;
-		const position = new Animated.ValueXY({x: 0, y: SCREEN_HEIGHT - SCREEN_HEIGHT*0.075});
+		const position = new Animated.ValueXY({x: 0, y: SCREEN_HEIGHT});
 		const panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: () => true,
 			onPanResponderMove: (event, gesture) => {
-				position.setValue({ y:gesture.moveY });
+				position.setValue({ y:gesture.moveY- SCREEN_HEIGHT*0.50 });
 			},
 			onPanResponderRelease: (event, gesture) => {
 				if(gesture.moveY < NOTEPAD_BOUNDARY){
@@ -43,9 +44,13 @@ export default class Notepad extends Component {
 	}
 
 
+	componentDidMount(){
+		this.onSwipeUp();
+	}
+
 	renderClue(item){
 		if(item.id < this.props.index){
-			return ( //Modificar los clues aqui
+			return ( // hacer un componente clue y llamarlo aqui
 			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
 			key={item.id}
 			left
@@ -82,18 +87,31 @@ export default class Notepad extends Component {
 		}
 	}
 
-	renderNotepad(){
+	renderNotepad(){ //Pasar a flatlist
 		return this.props.clues.map(item =>{
 				return this.renderClue(item);
 			}	);
 	}
 
+	renderClueDescription(clue) {
+
+
+	}
+
 	render() {
 		return (
+		<View style={{ position: 'absolute',top: 0, height: SCREEN_HEIGHT}}>
 			<Animated.View
 				style={this.state.position.getLayout()}
 				{...this.state.panResponder.panHandlers}
 			>
+			<View style={styles.middleView}>
+				{this.renderClueDescription()}
+				<Image
+                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcpM6qYVMOQrIgu-O0QxOry14dRK7K0J9MCv2yDuXtHfVp_jOx'}}
+                    style={styles.imagenStyle}
+                />
+			</View>
                 <View style={styles.tab}>
 					<Text style={styles.tabText}>^</Text>
 				</View>
@@ -110,6 +128,7 @@ export default class Notepad extends Component {
 					/>
 				</View>
 			</Animated.View>
+		</View>
 		);
 	}
 
@@ -117,19 +136,27 @@ export default class Notepad extends Component {
 
 	onSwipeUp(){
 		Animated.spring(this.state.position, {
-			toValue: {x: 0, y: SCREEN_HEIGHT*0.40}
+			toValue: {x: 0, y: SCREEN_HEIGHT*0.075}
 		}).start();
 	}
 
 	onSwipeDown(){
 		Animated.spring(this.state.position, {
-			toValue: {x: 0, y: SCREEN_HEIGHT - SCREEN_HEIGHT*0.075}
+			toValue: {x: 0, y: SCREEN_HEIGHT*0.45}
 		}).start();
 	}
 
 }
 
 const styles = {
+	middleView: {
+		width: SCREEN_WIDTH*0.9,
+		backgroundColor: 'rgba(255,255,255,0)',
+		height: SCREEN_HEIGHT*0.35,
+		marginTop: SCREEN_HEIGHT*0.1,
+		margin: SCREEN_WIDTH*0.05,
+		borderRadius: 20,
+	},
 	buttonContainerStyle: {
 		borderRadius: 5,
 		margin:NOTEPAD_WIDTH*0.025,
@@ -152,7 +179,7 @@ const styles = {
 		marginRight: SCREEN_WIDTH*0.05,
 		width: NOTEPAD_WIDTH,
 		backgroundColor: '#f5f5f5',
-		height: SCREEN_HEIGHT*0.5
+		height: SCREEN_HEIGHT*0.35
 	},
 	tabText: {
 		textAlign: 'center',
@@ -171,4 +198,10 @@ const styles = {
 		borderLeftColor: '#ff0000',
         borderLeftWidth: 2,
 	},
+	imagenStyle: {
+        resizeMode: 'contain',
+        flex: 1,
+        width: '100%',
+        height: '100%'
+    },
 };
