@@ -6,6 +6,7 @@ import { Text,
 		Image,
 		PanResponder,
 		Dimensions,
+		FlatList,
  } from 'react-native';	
  import { CheckBox, Button } from 'react-native-elements'	
 
@@ -88,14 +89,13 @@ export default class Notepad extends Component {
 	}
 
 	renderNotepad(){ //Pasar a flatlist
-		return this.props.clues.map(item =>{
-				return this.renderClue(item);
-			}	);
-	}
-
-	renderClueDescription(clue) {
-
-
+		return (
+                <FlatList
+                    data={this.props.clues}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({item}) => this.renderClue(item)}
+                    extraData={this.props.index}
+                />);
 	}
 
 	render() {
@@ -106,11 +106,7 @@ export default class Notepad extends Component {
 				{...this.state.panResponder.panHandlers}
 			>
 			<View style={styles.middleView}>
-				{this.renderClueDescription()}
-				<Image
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcpM6qYVMOQrIgu-O0QxOry14dRK7K0J9MCv2yDuXtHfVp_jOx'}}
-                    style={styles.imagenStyle}
-                />
+				{this.props.children}
 			</View>
                 <View style={styles.tab}>
 					<Text style={styles.tabText}>^</Text>

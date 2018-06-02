@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Image, Text, View, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
-import { BarCodeScanner, Camera, Permissions } from 'expo';
+import { BarCodeScanner, Camera, Permissions, Audio } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 import Alert from '../components/Alert';
 import Modal from 'react-native-modal';
@@ -67,9 +67,12 @@ class CameraScanner extends Component {
             } else {
                 if (this.state.GIF) {
                     return (
-                        <View style={styles.gifContainer}>
-                            <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
-                        </View>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                                <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
+                            </Notepad>
+                        </BarCodeScanner>
+
                     );
                 } else if (this.state.victoria) {
                     return (
@@ -141,14 +144,29 @@ class CameraScanner extends Component {
         this.goHome();
     }
 
-    solvedClue() {
+    async solvedClue() {
+        const SoundObject = new Audio.Sound();
         // Indicador de que se resolvió, sonido o algo
         let index = this.state.clueIndex;
         index++;
         if (index === this.state.clues.length) {
             // Se terminó, llamar modal y de modal a Loading
+        try {
+             await SoundObject.loadAsync(require('../assets/mistery-complete.mp3'));
+             await SoundObject.playAsync();
+        }
+        catch(err){
+            //error
+        }
             this.setState({ victoria: true });
         } else {
+        try {
+             await SoundObject.loadAsync(require('../assets/clue-solved.wav'));
+             await SoundObject.playAsync();
+        }
+        catch(err){
+            //error
+        }
             this.setState({ clueIndex: index, GIF: true });
             setTimeout(() => this.setState({ GIF: false }), 6200);
         }
