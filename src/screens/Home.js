@@ -20,7 +20,7 @@ class Home extends Component {
     }
 
     prepareData() {
-        const { params } = this.props.navigation.state;
+        const params = this.props.navigation.state.params;
         const keys = Object.keys(params);
         const data = [];
         keys.forEach((key) => {

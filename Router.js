@@ -7,6 +7,9 @@ import Developing from './src/screens/Developing';
 import { Home } from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
 import Header from './src/components/Header';
+import Login from './src/screens/Login';
+import Recovery from './src/screens/Recovery';
+import Register from './src/screens/Register';
 
 class Router extends Component {
     render() {
@@ -23,6 +26,24 @@ const Navigator = createStackNavigator(
     {
         Loading: {
             screen: Loading,
+            navigationOptions: {
+                header: null
+            }
+        },
+        Login: {
+            screen: Login,
+            navigationOptions: {
+                header: null
+            }
+        },
+        Register: {
+            screen: Register,
+            navigationOptions: {
+                header: null
+            }
+        },
+        Recovery: {
+            screen: Recovery,
             navigationOptions: {
                 header: null
             }

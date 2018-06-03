@@ -17,11 +17,21 @@ class Loading extends Component {
         }
         this.getItem('/misteryMetadata').then((result) => {
             const datos = result.val();
-            const resetAction = StackActions.reset({
-               index: 0,
-               actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
-            });
-            this.props.navigation.dispatch(resetAction);
+            firebase.auth().onAuthStateChanged((user) => {
+                if (/*user !== null*/ false) {
+                    const resetAction = StackActions.reset({
+                       index: 0,
+                       actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                    });
+                    this.props.navigation.dispatch(resetAction);
+                } else {
+                    const resetAction = StackActions.reset({
+                       index: 0,
+                       actions: [NavigationActions.navigate({ routeName: 'Login', params: datos })]
+                    });
+                    this.props.navigation.dispatch(resetAction);
+                }
+            })
         }).catch((err) => {
             console.log(err);
         });
@@ -71,7 +81,6 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1
-
     },
     contenedorTexto: {
         alignItems: 'center',
