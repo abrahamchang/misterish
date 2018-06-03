@@ -8,7 +8,8 @@ import { Text,
 		Dimensions,
 		FlatList,
  } from 'react-native';	
- import { CheckBox, Button } from 'react-native-elements'	
+ import { CheckBox, Button } from 'react-native-elements'
+ import Clue from './Clue'	
 
  /* eslint-enable no-unused-vars */
 
@@ -49,46 +50,41 @@ export default class Notepad extends Component {
 		this.onSwipeUp();
 	}
 
+	renderMidImg(){
+		//Todo
+	}
+
+	renderMidText(){
+		//Todo
+	}
+
 	renderClue(item){
 		if(item.id < this.props.index){
-			return ( // hacer un componente clue y llamarlo aqui
-			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
+			return ( 
+			<Clue
 			key={item.id}
-			left
-			title={item.clue}
-			iconLeft
-			iconType='material'
-			checkedIcon='done'
-			uncheckedIcon='search'
-			uncheckedColor='gray'
-			checkedColor='purple'
+			type={item.type}
+			title={item.title}
+			description={item.clue}
 			checked={this.state.checked}
-			containerStyle={{padding: 3}}
-			textStyle={{flexWrap: "wrap"}}
+
 			/>
 			);
 		}else if (item.id === this.props.index){
 			return(
-			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
+			<Clue
 			key={item.id}
-			left
-			checked= {this.state.checked}
-			title={item.clue}
-			iconLeft
-			iconType='material'
-			checkedIcon='done'
-			uncheckedIcon='search'
-			uncheckedColor='gray'
-			checkedColor='purple'
+			type={item.type}
+			title={item.title}
+			description={item.clue}
 			checked={this.state.unchecked}
-			containerStyle={{padding: 3}}
-			textStyle={{flexWrap: "wrap"}}
+
 			/>
 			)
 		}
 	}
 
-	renderNotepad(){ //Pasar a flatlist
+	renderNotepad(){
 		return (
                 <FlatList
                     data={this.props.clues}
@@ -163,16 +159,15 @@ const styles = {
 	tab: {
 		borderTopRightRadius: 40,
 		borderTopLeftRadius: 40,
-		marginLeft: SCREEN_WIDTH*0.095,
-		marginRight: SCREEN_WIDTH*0.095,
-		width: NOTEPAD_WIDTH*0.9,
+		marginLeft: SCREEN_WIDTH*0.05,
+		width: NOTEPAD_WIDTH,
 		backgroundColor: '#f5f5f5',
 		height: SCREEN_HEIGHT*0.075,
 	},
 	pad: {
-		borderRadius: 10,
+		borderBottomRightRadius: 10,
+		borderBottomLeftRadius: 10,
 		marginLeft: SCREEN_WIDTH*0.05,
-		marginRight: SCREEN_WIDTH*0.05,
 		width: NOTEPAD_WIDTH,
 		backgroundColor: '#f5f5f5',
 		height: SCREEN_HEIGHT*0.35
@@ -185,19 +180,4 @@ const styles = {
 	padText: {
 		fontSize: 16,
 	},
-	notepadLines:{
-		width: '100%',
-        borderBottomWidth: 1,
-        borderBottomColor: '#66ccff',
-	},
-	leftMarginColor:{
-		borderLeftColor: '#ff0000',
-        borderLeftWidth: 2,
-	},
-	imagenStyle: {
-        resizeMode: 'contain',
-        flex: 1,
-        width: '100%',
-        height: '100%'
-    },
 };
