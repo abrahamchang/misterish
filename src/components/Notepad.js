@@ -25,8 +25,10 @@ export default class Notepad extends Component {
 
 	constructor(props) {
 		super(props);
+		const midViewOn = false;
 		const checked = true;
 		const unchecked = false;
+		const midViewItem = null;
 		const position = new Animated.ValueXY({x: 0, y: SCREEN_HEIGHT});
 		const panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: () => true,
@@ -42,7 +44,7 @@ export default class Notepad extends Component {
 			}
 
 		});
-		this.state = { panResponder, position, checked, unchecked };
+		this.state = { panResponder, position, checked, unchecked, midViewOn, midViewItem};
 	}
 
 
@@ -50,13 +52,38 @@ export default class Notepad extends Component {
 		this.onSwipeUp();
 	}
 
-	renderMidImg(){
-		//Todo
+	renderMidView(item){
+		this.setState(previousState => {
+        return { midViewOn: !previousState.midViewOn, midViewItem: item };
+      });
+		
+		
 	}
 
-	renderMidText(){
-		//Todo
+	renderMidViewItem(){
+		var rend = this.state.midViewOn;
+		var item = this.state.midViewItem;
+		if(rend){
+			if(item.type === 'img'){
+				return (
+					<View style={styles.midView}>
+						<Image style={styles.midImage} source={{ uri: item.clue }}/>
+					</View>
+				);
+			}
+			else if(item.type === 'text'){
+				return (
+					<View>
+						<Text style={{color: '#ffffff'}}>
+							{item.clue}
+						</Text>
+					</View>
+				);
+			}
+		}
+
 	}
+
 
 	renderClue(item){
 		if(item.id < this.props.index){
@@ -67,7 +94,6 @@ export default class Notepad extends Component {
 			title={item.title}
 			description={item.clue}
 			checked={this.state.checked}
-
 			/>
 			);
 		}else if (item.id === this.props.index){
@@ -78,7 +104,7 @@ export default class Notepad extends Component {
 			title={item.title}
 			description={item.clue}
 			checked={this.state.unchecked}
-
+			renderMidView={()=> this.renderMidView(item)}
 			/>
 			)
 		}
@@ -103,6 +129,7 @@ export default class Notepad extends Component {
 			>
 			<View style={styles.middleView}>
 				{this.props.children}
+				{this.renderMidViewItem()}
 			</View>
                 <View style={styles.tab}>
 					<Text style={styles.tabText}>^</Text>

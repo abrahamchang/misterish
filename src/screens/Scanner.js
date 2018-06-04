@@ -111,7 +111,7 @@ class CameraScanner extends Component {
                 } else {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)} />
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}/>
                         </BarCodeScanner>
                     );
                 }

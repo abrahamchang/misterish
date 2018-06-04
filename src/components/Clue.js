@@ -23,7 +23,7 @@ export default class Clue extends Component {
 	render(){		
 		if(this.props.type === 'text'){
 			return(
-				<TouchableOpacity>
+				<TouchableOpacity onPress={this.props.renderMidView}>
 					<View style={styles.container}>
 						<Icon 
 						name={this.props.checked ? 'done' : 'search'}
@@ -38,7 +38,7 @@ export default class Clue extends Component {
 				<TouchableOpacity>
 					<View style={styles.container}>
 						<Icon 
-							name={this.props.checked ? 'done' : 'image_search'}
+							name={this.props.checked ? 'done' : 'image'}
 							color={this.props.checked ? '#553285': '#aaaaaa'}
 						/>
 						<Button 
