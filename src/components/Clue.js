@@ -28,6 +28,7 @@ export default class Clue extends Component {
 						<Icon 
 						name={this.props.checked ? 'done' : 'search'}
 						color={this.props.checked ? '#553285': '#aaaaaa'}
+						size={50}
 						/>
 						<Text style={styles.textStyle}>{this.props.title}</Text>
 					</View>
@@ -40,10 +41,10 @@ export default class Clue extends Component {
 						<Icon 
 							name={this.props.checked ? 'done' : 'image'}
 							color={this.props.checked ? '#553285': '#aaaaaa'}
+							size={50}
 						/>
 						<Button 
-							raised
-							title='Tap to view'
+							title={this.props.checked ? 'Done!' : 'Tap to view'}
 							containerViewStyle={styles.buttonContainerStyle}
 							backgroundColor= '#553285'
 							borderRadius={5}
@@ -56,19 +57,23 @@ export default class Clue extends Component {
 			return(
 				<TouchableOpacity>
 					<View style={styles.container}>
-						<TouchableOpacity /*onPress={funcion para cargar el audio y darle play}*/>
+						<TouchableOpacity>
 							<Icon 
-								name={this.props.checked ? 'done' : 'play_arrow'}
+								name={this.props.checked ? 'done' : 'play-arrow'}
 								color={this.props.checked ? '#553285': '#aaaaaa'}
+								size={50}
+								onPress={this.props.playClueAudio}
 							/>
 						</TouchableOpacity>
-						<Progress.Bar 
-							/*progress={devolver el progreso interpolado entre 0 y 1 donde 1 es la duracion del audio}*/
-							color={'#553285'}
-							unfilledColor={'#fafafa'}
-							borderWidth={2}
-							borderColor={'#553285'}
-						/>
+						<View style={{justifyContent: 'center', alignItems: 'center' }}>
+							<Progress.Bar 
+								progress={1}/*devolver el progreso interpolado entre 0 y 1 donde 1 es la duracion del audio}*/
+								color={'#553285'}
+								unfilledColor={'#fafafa'}
+								borderWidth={2}
+								borderColor={'#553285'}
+							/>
+						</View>
 					</View>
 				</TouchableOpacity>
 			);

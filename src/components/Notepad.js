@@ -8,6 +8,7 @@ import { Text,
 		Dimensions,
 		FlatList,
  } from 'react-native';	
+ import { Audio } from 'expo';
  import { CheckBox, Button } from 'react-native-elements'
  import Clue from './Clue'	
 
@@ -63,11 +64,12 @@ export default class Notepad extends Component {
 	renderMidViewItem(){
 		var rend = this.state.midViewOn;
 		var item = this.state.midViewItem;
+	
 		if(rend){
 			if(item.type === 'img'){
 				return (
-					<View style={styles.midView}>
-						<Image style={styles.midImage} source={{ uri: item.clue }}/>
+					<View >
+						<Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={{ uri: item.clue }}/>
 					</View>
 				);
 			}
@@ -82,6 +84,18 @@ export default class Notepad extends Component {
 			}
 		}
 
+	}
+
+    async playAudio(item) {
+		const SoundObject = new Audio.Sound();
+		try {
+             await SoundObject.loadAsync({uri: item.clue});
+             await SoundObject.playAsync();
+             console.log(soundObject.getStatusAsync());
+        }
+        catch(err){
+            //error
+        }
 	}
 
 
@@ -105,6 +119,7 @@ export default class Notepad extends Component {
 			description={item.clue}
 			checked={this.state.unchecked}
 			renderMidView={()=> this.renderMidView(item)}
+			playClueAudio={()=> this.playAudio(item)}
 			/>
 			)
 		}
