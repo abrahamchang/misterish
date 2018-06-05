@@ -16,7 +16,7 @@ class Profile extends Component {
                     <View style={ styles.thumbnailContainerStyle }>
                         <Image
                             style={ styles.thumbnailStyle }
-                            source={{ uri: 'https://pbs.twimg.com/profile_images/968356635344359424/Zyb6QzXB_400x400.jpg' }}
+                            source={{ uri: 'https://api.adorable.io/avatars/285/abott@adorable.pngCopy%20to%20Clip' }}
                         />
                     </View>
                     <View style={ styles.headerContentStyle }>
