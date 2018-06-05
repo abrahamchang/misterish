@@ -7,6 +7,7 @@ import Developing from './src/screens/Developing';
 import { Home } from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
 import Header from './src/components/Header';
+import Profile from './src/screens/Profile'; 
 
 class Router extends Component {
     render() {
@@ -30,7 +31,7 @@ const Navigator = createStackNavigator(
         Root: createBottomTabNavigator(
             {
                 Profile: {
-                    screen: Developing,
+                    screen: Profile,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image
