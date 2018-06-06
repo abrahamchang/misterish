@@ -27,11 +27,11 @@ const MisteryDetail = ({ imageURL, name, description, difficulty, userID, review
                 <View style={backStyle}>
                     <Text style={textoStyle}>{name}</Text>
                     <Text style={textoStyle}>{description}</Text>
-                    <Text style={textoStyle}>Dificultad: {difficulty}</Text>
-                    <Text style={textoStyle}>Autor: {userID}</Text>
+                    <Text style={textoStyle}>Difficulty: {difficulty}</Text>
+                    <Text style={textoStyle}>Author: {userID}</Text>
                     <Text style={textoStyle}>Reviews: {reviews}</Text>
                     <TouchableOpacity onPress={onPress} style={contenedorBoton}>
-                        <Text style={textoBoton}>¡Resolver!</Text>
+                        <Text style={textoBoton}>Play!</Text>
                     </TouchableOpacity>
                 </View>
             </FlipCard>

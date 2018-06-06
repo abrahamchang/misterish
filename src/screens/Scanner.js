@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { Image, Text, View, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
-import { BarCodeScanner, Camera, Location, Permissions } from 'expo';
+import { Audio, BarCodeScanner, Camera, Location, Permissions } from 'expo';
+import moment from 'moment';
+
 import { StackActions, NavigationActions } from 'react-navigation';
 import Alert from '../components/Alert';
 import Modal from 'react-native-modal';
 import Notepad from '../components/Notepad';
+
+const MAXIMUM_RADIUS = 0.15;
+const MAXIMUM_TIME_DIFFERENCE = 5;
 
 class CameraScanner extends Component {
     state = {
@@ -14,6 +19,7 @@ class CameraScanner extends Component {
         location: undefined,
         cargando: true,
         clues: [],
+        sounds: [],
         clueIndex: 0,
         GIF: false,
         modalVisible: false,
@@ -21,8 +27,8 @@ class CameraScanner extends Component {
     };
 
     async componentWillMount() {
-        await this.askForCameraPermission();
         await this.askForLocationPermission();
+        await this.askForCameraPermission();
     }
 
     async askForCameraPermission() {
@@ -32,19 +38,26 @@ class CameraScanner extends Component {
 
     async askForLocationPermission() {
         const { status } = await Permissions.askAsync(Permissions.LOCATION);
-        this.setState({ doIHaveLocationPermission: status === 'granted' });
+        this.setState({ doIHaveLocationPermission: status === 'granted', isMounted: true });
     }
 
     async getLocationAsync() {
         if (this.state.doIHaveLocationPermission) {
             let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
             console.log(location);
-            this.setState({ location });
+            if (this.state.isMounted) {
+                this.setState({ location });
+            }
         }
     }
 
     async componentWillUpdate() {
         await this.getLocationAsync();
+        this._handleLocationReading();
+    }
+
+    async componentWillUnmount() {
+        this.setState({ isMounted: false });
     }
 
     findClues() {
@@ -69,8 +82,8 @@ class CameraScanner extends Component {
             this.findClues();
             return (
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size='large' color="#36175E"/>
-                    <Text style={styles.loadingText}>Loading...</Text>
+                    <ActivityIndicator size='large' color="#36175E" />
+                    <Text style={styles.loadingText}>Loading clues</Text>
                 </View>
             );
         } else {
@@ -90,43 +103,37 @@ class CameraScanner extends Component {
             } else {
                 if (this.state.GIF) {
                     return (
-                        <View style={styles.gifContainer}>
-                            <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
-                        </View>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                                <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
+                            </Notepad>
+                        </BarCodeScanner>
+
                     );
                 } else if (this.state.victoria) {
                     return (
-                        <Modal
-                            isVisible={true}
-                            backdropColor={'rgba(54,23,94,0.8)'}
-                            backdropOpacity={0.5}
-                        >
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
-                                    title={'You did it!'}
-                                    text={'You completed the mistery!\nPress any button to continue'}
+                                    title={'Congratulations, you did it!'}
+                                    text={'You completed the mistery!\nPress the below button to continue.'}
                                     onPressOk={this.goHome.bind(this)}
-                                    onPressCancel={this.goHome.bind(this)}
                                 />
-                            </View>
-                        </Modal>
+                            </Notepad>
+                        </BarCodeScanner>
                     );
                 } else if (this.state.modalVisible) {
                     return (
-                        <Modal
-                            isVisible={this.state.modalVisible}
-                            backdropColor={'rgba(54,23,94,0.8)'}
-                            backdropOpacity={0.5}
-                        >
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
                                     title={'Exit'}
                                     text={'Are you sure you want to leave?\nYou will lose your progress'}
                                     onPressCancel={this.onPressCancel.bind(this)}
                                     onPressOk={this.onPressOk.bind(this)}
                                 />
-                            </View>
-                        </Modal>
+                            </Notepad>
+                        </BarCodeScanner>
                     );
                 } else {
                     return (
@@ -141,12 +148,52 @@ class CameraScanner extends Component {
 
     _handleBarCodeRead = ({ type, data }) => {
         const clue = this.state.clues[this.state.clueIndex];
-        if (type === 256 || type === 'org.iso.QRCode') {
-            if (clue.sol === data) {
-                this.solvedClue();
-            }
+        if (clue.sol === data) {
+            this.solvedClue();
         }
     };
+
+    _handleLocationReading() {
+        if (this.state.location) {
+            const clue = this.state.clues[this.state.clueIndex];
+            const separatedString = clue.sol.split('|');
+            if (separatedString.length > 0) {
+                const longitude = separatedString[0];
+                const actualLongitude = this.state.location.coords.longitude;
+                const latitude = separatedString[1];
+                const actualLatitude = this.state.location.coords.latitude;
+                const time = separatedString[2];
+                const actualTime = moment().format('DD/MM/YYYY HH:mm');
+                if (time.length > 0) {
+                    if (this.getDistanceFromLatLonInKm(latitude, longitude, actualLatitude, actualLongitude) < MAXIMUM_RADIUS
+                        && Math.abs(moment(time).diff(moment(actualTime), 'minutes')) < MAXIMUM_TIME_DIFFERENCE) {
+                        this.solvedClue();
+                    }
+                } else {
+                    if (this.getDistanceFromLatLonInKm(latitude, longitude, actualLatitude, actualLongitude) < MAXIMUM_RADIUS) {
+                        this.solvedClue();
+                    }
+                }
+            }
+        }
+    }
+
+    getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+        var R = 6371;
+        var dLat = this.deg2rad(lat2-lat1);
+        var dLon = this.deg2rad(lon2-lon1); 
+        var a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c;
+        return d;
+    }
+
+    deg2rad(deg) {
+        return deg * (Math.PI/180)
+    }
 
     goHome() {
         const resetAction = StackActions.reset({
@@ -164,14 +211,29 @@ class CameraScanner extends Component {
         this.goHome();
     }
 
-    solvedClue() {
+    async solvedClue() {
+        const SoundObject = new Audio.Sound();
         // Indicador de que se resolvió, sonido o algo
         let index = this.state.clueIndex;
         index++;
         if (index === this.state.clues.length) {
             // Se terminó, llamar modal y de modal a Loading
+            try {
+                await SoundObject.loadAsync(require('../assets/mistery-complete.mp3'));
+                await SoundObject.playAsync();
+            }
+            catch (err) {
+                //error
+            }
             this.setState({ victoria: true });
         } else {
+            try {
+                await SoundObject.loadAsync(require('../assets/clue-solved.wav'));
+                await SoundObject.playAsync();
+            }
+            catch (err) {
+                //error
+            }
             this.setState({ clueIndex: index, GIF: true });
             setTimeout(() => this.setState({ GIF: false }), 6200);
         }
@@ -189,7 +251,7 @@ const styles = {
     loadingText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#f4f4f4'
+        color: 'white'
     },
     errorContainer: {
         justifyContent: 'center',

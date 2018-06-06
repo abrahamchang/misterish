@@ -6,8 +6,11 @@ import { Text,
 		Image,
 		PanResponder,
 		Dimensions,
+		FlatList,
  } from 'react-native';	
- import { CheckBox, Button } from 'react-native-elements'	
+ import { Audio } from 'expo';
+ import { CheckBox, Button } from 'react-native-elements'
+ import Clue from './Clue'	
 
  /* eslint-enable no-unused-vars */
 
@@ -23,8 +26,10 @@ export default class Notepad extends Component {
 
 	constructor(props) {
 		super(props);
+		const midViewOn = false;
 		const checked = true;
 		const unchecked = false;
+		const midViewItem = null;
 		const position = new Animated.ValueXY({x: 0, y: SCREEN_HEIGHT});
 		const panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: () => true,
@@ -40,7 +45,7 @@ export default class Notepad extends Component {
 			}
 
 		});
-		this.state = { panResponder, position, checked, unchecked };
+		this.state = { panResponder, position, checked, unchecked, midViewOn, midViewItem};
 	}
 
 
@@ -48,54 +53,92 @@ export default class Notepad extends Component {
 		this.onSwipeUp();
 	}
 
+	renderMidView(item){
+		this.setState(previousState => {
+        return { midViewOn: !previousState.midViewOn, midViewItem: item };
+      });
+		
+		
+	}
+
+	renderMidViewItem(){
+		var rend = this.state.midViewOn;
+		var item = this.state.midViewItem;
+	
+		if(rend){
+			if(item.type === 'img'){
+				return (
+					<View>
+						<Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={{ uri: item.clue }}/>
+					</View>
+				);
+			}
+			else if(item.type === 'text'){
+				return (
+					<View>
+						<Text style={{color: '#ffffff'}}>
+							{item.clue}
+						</Text>
+					</View>
+				);
+			} else if (item.type === 'location') {
+				return (
+					<View>
+						<Text style={{color: '#ffffff'}}>
+							{item.clue}
+						</Text>
+					</View>
+				);
+			}
+		}
+
+	}
+
+    async playAudio(item) {
+		const SoundObject = new Audio.Sound();
+		try {
+        	await SoundObject.loadAsync({uri: item.clue});
+         	await SoundObject.playAsync();
+        }
+        catch(err){
+            //error
+        }
+	}
+
 	renderClue(item){
 		if(item.id < this.props.index){
-			return ( // hacer un componente clue y llamarlo aqui
-			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
+			return ( 
+			<Clue
 			key={item.id}
-			left
-			title={item.clue}
-			iconLeft
-			iconType='material'
-			checkedIcon='done'
-			uncheckedIcon='search'
-			uncheckedColor='gray'
-			checkedColor='purple'
+			type={item.type}
+			title={item.title}
+			description={item.clue}
 			checked={this.state.checked}
-			containerStyle={{padding: 3}}
-			textStyle={{flexWrap: "wrap"}}
 			/>
 			);
 		}else if (item.id === this.props.index){
 			return(
-			<CheckBox style={{paddingLeft: SCREEN_WIDTH*0.05}}
+			<Clue
 			key={item.id}
-			left
-			checked= {this.state.checked}
-			title={item.clue}
-			iconLeft
-			iconType='material'
-			checkedIcon='done'
-			uncheckedIcon='search'
-			uncheckedColor='gray'
-			checkedColor='purple'
+			type={item.type}
+			title={item.title}
+			description={item.clue}
 			checked={this.state.unchecked}
-			containerStyle={{padding: 3}}
-			textStyle={{flexWrap: "wrap"}}
+			renderMidView={()=> this.renderMidView(item)}
+			playClueAudio={()=> this.playAudio(item)}
 			/>
 			)
 		}
 	}
 
-	renderNotepad(){ //Pasar a flatlist
-		return this.props.clues.map(item =>{
-				return this.renderClue(item);
-			}	);
-	}
-
-	renderClueDescription(clue) {
-
-
+	renderNotepad(){
+		return (
+                <FlatList
+                    data={this.props.clues}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({item}) => this.renderClue(item)}
+                    extraData={this.props.index}
+                />);
 	}
 
 	render() {
@@ -106,11 +149,8 @@ export default class Notepad extends Component {
 				{...this.state.panResponder.panHandlers}
 			>
 			<View style={styles.middleView}>
-				{this.renderClueDescription()}
-				<Image
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcpM6qYVMOQrIgu-O0QxOry14dRK7K0J9MCv2yDuXtHfVp_jOx'}}
-                    style={styles.imagenStyle}
-                />
+				{this.props.children}
+				{this.renderMidViewItem()}
 			</View>
                 <View style={styles.tab}>
 					<Text style={styles.tabText}>^</Text>
@@ -131,8 +171,6 @@ export default class Notepad extends Component {
 		</View>
 		);
 	}
-
-
 
 	onSwipeUp(){
 		Animated.spring(this.state.position, {
@@ -156,6 +194,8 @@ const styles = {
 		marginTop: SCREEN_HEIGHT*0.1,
 		margin: SCREEN_WIDTH*0.05,
 		borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
 	},
 	buttonContainerStyle: {
 		borderRadius: 5,
@@ -167,16 +207,15 @@ const styles = {
 	tab: {
 		borderTopRightRadius: 40,
 		borderTopLeftRadius: 40,
-		marginLeft: SCREEN_WIDTH*0.095,
-		marginRight: SCREEN_WIDTH*0.095,
-		width: NOTEPAD_WIDTH*0.9,
+		marginLeft: SCREEN_WIDTH*0.05,
+		width: NOTEPAD_WIDTH,
 		backgroundColor: '#f5f5f5',
 		height: SCREEN_HEIGHT*0.075,
 	},
 	pad: {
-		borderRadius: 10,
+		borderBottomRightRadius: 10,
+		borderBottomLeftRadius: 10,
 		marginLeft: SCREEN_WIDTH*0.05,
-		marginRight: SCREEN_WIDTH*0.05,
 		width: NOTEPAD_WIDTH,
 		backgroundColor: '#f5f5f5',
 		height: SCREEN_HEIGHT*0.35
@@ -189,19 +228,4 @@ const styles = {
 	padText: {
 		fontSize: 16,
 	},
-	notepadLines:{
-		width: '100%',
-        borderBottomWidth: 1,
-        borderBottomColor: '#66ccff',
-	},
-	leftMarginColor:{
-		borderLeftColor: '#ff0000',
-        borderLeftWidth: 2,
-	},
-	imagenStyle: {
-        resizeMode: 'contain',
-        flex: 1,
-        width: '100%',
-        height: '100%'
-    },
 };
