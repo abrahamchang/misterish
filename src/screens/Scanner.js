@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Image, Text, View, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
-import { BarCodeScanner, Camera, Permissions } from 'expo';
+import { BarCodeScanner, Camera, Location, Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 import Alert from '../components/Alert';
 import Modal from 'react-native-modal';
@@ -10,6 +10,8 @@ import Notepad from '../components/Notepad';
 class CameraScanner extends Component {
     state = {
         doIHaveCameraPermission: null,
+        doIHaveLocationPermission: null,
+        location: undefined,
         cargando: true,
         clues: [],
         clueIndex: 0,
@@ -19,8 +21,30 @@ class CameraScanner extends Component {
     };
 
     async componentWillMount() {
+        await this.askForCameraPermission();
+        await this.askForLocationPermission();
+    }
+
+    async askForCameraPermission() {
         const { status } = await Permissions.askAsync(Permissions.CAMERA);
         this.setState({ doIHaveCameraPermission: status === 'granted' });
+    }
+
+    async askForLocationPermission() {
+        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        this.setState({ doIHaveLocationPermission: status === 'granted' });
+    }
+
+    async getLocationAsync() {
+        if (this.state.doIHaveLocationPermission) {
+            let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+            console.log(location);
+            this.setState({ location });
+        }
+    }
+
+    async componentWillUpdate() {
+        await this.getLocationAsync();
     }
 
     findClues() {
@@ -41,7 +65,6 @@ class CameraScanner extends Component {
 
     render() {
         const { doIHaveCameraPermission } = this.state;
-
         if (this.state.cargando) {
             this.findClues();
             return (
@@ -61,7 +84,7 @@ class CameraScanner extends Component {
                 // Handling error
                 return (
                     <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>You Did Not Gave Us Permission to User Your Camera</Text>
+                        <Text style={styles.errorText}>You Did Not Gave Us Permission to Use Your Camera</Text>
                     </View>
                 );
             } else {
