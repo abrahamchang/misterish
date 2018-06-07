@@ -43,18 +43,26 @@ class CameraScanner extends Component {
 
     async getLocationAsync() {
         if (this.state.doIHaveLocationPermission) {
-            let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-            console.log(location);
-            if (this.state.isMounted) {
-                this.setState({ location });
+            const estado = await Location.getProviderStatusAsync();
+            if (estado.locationServicesEnabled) {
+                let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+                console.log(location);
+                if (this.state.isMounted) {
+                    this.setState({ location });
+                }
+            } else {
+                // Falta manejo del caso en el que no haya servicio de GPS
+                this.setState({ location: undefined });
             }
         }
     }
 
     async componentWillUpdate() {
-        if (this.state.clues[this.state.clueIndex].type === 'location') {
-            await this.getLocationAsync();
-            this._handleLocationReading();
+        if (this.state.clues[this.state.clueIndex]) {
+            if (this.state.clues[this.state.clueIndex].type === 'location') {
+                await this.getLocationAsync();
+                this._handleLocationReading();
+            }
         }
     }
 

@@ -27,12 +27,14 @@ class Login extends Component {
 
     componentWillMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            const { datos } = this.props.navigation.state.params;
-            const resetAction = StackActions.reset({
-               index: 0,
-               actions: [NavigationActions.navigate({ routeName: 'Root', params: this.props.navigation.state.params })]
-            });
-            this.props.navigation.dispatch(resetAction);
+            if (user) {
+                const { datos } = this.props.navigation.state.params;
+                const resetAction = StackActions.reset({
+                   index: 0,
+                   actions: [NavigationActions.navigate({ routeName: 'Root', params: this.props.navigation.state.params })]
+                });
+                this.props.navigation.dispatch(resetAction);
+            }
         });
     }
 

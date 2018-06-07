@@ -6,16 +6,17 @@ import { StackActions, NavigationActions } from 'react-navigation';
 class Settings extends Component {
 
     logOut() {
-        firebase.auth().signOut();
-        const resetItems = StackActions.reset({
-            index: 0,
-            actions: [{
-                type: 'Navigation/INIT',
-                routeName: 'Login'
-                //AQUI ME FALTA ALGO PERO NO ME ACUERDO
-            }]
+        firebase.auth().signOut().then(() => {
+            const resetItems = StackActions.reset({
+                index: 0,
+                actions: [{
+                    type: 'Navigation/INIT',
+                    routeName: 'Loading'
+                    //AQUI ME FALTA ALGO PERO NO ME ACUERDO
+                }]
+            });
+            this.props.navigation.dispatch(resetItems);
         });
-        this.props.navigation.dispatch(resetItems);
     }
 
     render() {
