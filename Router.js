@@ -11,6 +11,7 @@ import Header from './src/components/Header';
 import Login from './src/screens/Login';
 import Recovery from './src/screens/Recovery';
 import Register from './src/screens/Register';
+import Profile from './src/screens/Profile'; 
 
 class Router extends Component {
     render() {
@@ -52,7 +53,7 @@ const Navigator = createStackNavigator(
         Root: createBottomTabNavigator(
             {
                 Profile: {
-                    screen: Developing,
+                    screen: Profile,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image
