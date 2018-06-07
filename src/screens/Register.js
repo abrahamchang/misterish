@@ -5,14 +5,14 @@ import firebase from 'firebase';
 import Button from '../components/common/Button';
 
 class Register extends Component {
-	state = {
+    state = {
         email: '',
         password: '',
         verificacionPassword: '',
         cargando: false,
         emailError: false,
         passwordError: false
-	};
+    };
 
     underlineColorEmail() {
         return this.state.emailError ? 'red' : '#36175E';
@@ -23,36 +23,50 @@ class Register extends Component {
     }
 
     loadOrButton() {
-        return this.state.cargando ? <ActivityIndicator size="large" color='#36175E'/> : <Button onPress={this.onPressSubmit.bind(this)}>Submit</Button>
+        return this.state.cargando ? <ActivityIndicator size="large" color='#36175E' /> : <Button onPress={this.onPressSubmit.bind(this)}>Submit</Button>
     }
 
     onPressSubmit() {
-    	this.setState({ cargando: true });
-    	if (this.state.password === this.state.verificacionPassword && this.state.password.length > 5) {
-    		firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-    			.then(() => {
-    				this.props.navigation.goBack(null);
-    			})
-    			.catch(() => {
-    				this.setState({
-    					password: '',
-    					verificacionPassword: '',
-    					cargando: false,
-    					emailError: true
-    				});
-    			});
-    	} else {
-    		this.setState({
-    			cargando: false,
-    			passwordError: true
-    		});
-    	}
+        this.setState({ cargando: true });
+        if (this.state.password === this.state.verificacionPassword && this.state.password.length > 5) {
+            firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+                .then((authUser) => {
+                    const { email, uid } = authUser.user;
+                    this.props.navigation.goBack(null);
+                    firebase.database()
+                        .ref(`users/${uid}`)
+                        .set({
+                            userID: uid,
+                            email: email,
+                            lvl: '0',
+                            fndList: {
+                                userID: ''
+                            },
+                            mstrList: {
+                                id: ''
+                            }
+                        });
+                })
+                .catch(() => {
+                    this.setState({
+                        password: '',
+                        verificacionPassword: '',
+                        cargando: false,
+                        emailError: true
+                    });
+                });
+        } else {
+            this.setState({
+                cargando: false,
+                passwordError: true
+            });
+        }
     }
 
-	render() {
-		return (
+    render() {
+        return (
             <View style={{ height: '100%', width: '100%' }}>
-                <View style={{ height: '10%' }}/>
+                <View style={{ height: '10%' }} />
                 <View style={styles.contenedorImagen}>
                     <Image
                         source={require('../assets/LogoC.png')}
@@ -117,8 +131,8 @@ class Register extends Component {
                     </View>
                 </View>
             </View>
-		);
-	}
+        );
+    }
 }
 
 export default Register;
