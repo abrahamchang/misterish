@@ -18,7 +18,7 @@ class Loading extends Component {
         this.getItem('/misteryMetadata').then((result) => {
             const datos = result.val();
             firebase.auth().onAuthStateChanged((user) => {
-                if (/*user !== null*/ false) {
+                if (user !== null) {
                     const resetAction = StackActions.reset({
                        index: 0,
                        actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]

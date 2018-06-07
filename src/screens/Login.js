@@ -25,7 +25,7 @@ class Login extends Component {
         return this.state.cargando ? <ActivityIndicator size="large" color='#36175E'/> : <Button onPress={this.onClickLogin.bind(this)}>Log In</Button>
     }
 
-    /*componentWillMount() {
+    componentWillMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
             const { datos } = this.props.navigation.state.params;
             const resetAction = StackActions.reset({
@@ -38,7 +38,7 @@ class Login extends Component {
 
     componentWillUnmount() {
         this.authSubscription();
-    }*/
+    }
 
     onClickLogin() {
         const { email, password } = this.state;
