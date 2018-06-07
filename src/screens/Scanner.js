@@ -52,8 +52,10 @@ class CameraScanner extends Component {
     }
 
     async componentWillUpdate() {
-        await this.getLocationAsync();
-        this._handleLocationReading();
+        if (this.state.clues[this.state.clueIndex].type === 'location') {
+            await this.getLocationAsync();
+            this._handleLocationReading();
+        }
     }
 
     async componentWillUnmount() {
@@ -154,7 +156,7 @@ class CameraScanner extends Component {
     };
 
     _handleLocationReading() {
-        if (this.state.location) {
+        if (this.state.clues[this.state.clueIndex].type === 'location' && this.state.location) {
             const clue = this.state.clues[this.state.clueIndex];
             const separatedString = clue.sol.split('|');
             if (separatedString.length > 0) {
@@ -178,21 +180,21 @@ class CameraScanner extends Component {
         }
     }
 
-    getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         var R = 6371;
-        var dLat = this.deg2rad(lat2-lat1);
-        var dLon = this.deg2rad(lon2-lon1); 
-        var a = 
-            Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2); 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var dLat = this.deg2rad(lat2 - lat1);
+        var dLon = this.deg2rad(lon2 - lon1);
+        var a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         var d = R * c;
         return d;
     }
 
     deg2rad(deg) {
-        return deg * (Math.PI/180)
+        return deg * (Math.PI / 180)
     }
 
     goHome() {

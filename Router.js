@@ -4,6 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import Loading from './src/screens/Loading';
 import Developing from './src/screens/Developing';
+import Settings from './src/screens/Settings';
 import { Home } from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
 import Header from './src/components/Header';
@@ -73,7 +74,7 @@ const Navigator = createStackNavigator(
                     }
                 },
                 Settings: {
-                    screen: Developing,
+                    screen: Settings,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image
