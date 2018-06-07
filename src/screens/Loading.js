@@ -24,7 +24,8 @@ class Loading extends Component {
             this.props.navigation.dispatch(resetAction);
         }).catch((err) => {
             console.log(err);
-        });
+            });
+
     }
 
     render() {
