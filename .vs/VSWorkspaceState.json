@@ -4,8 +4,9 @@
     "\\src",
     "\\src\\components",
     "\\src\\components\\common",
+    "\\src\\components\\Profile",
     "\\src\\screens"
   ],
-  "SelectedNode": "\\src\\screens\\Profile.js",
+  "SelectedNode": "\\src\\components\\Profile\\UserDetails.js",
   "PreviewInSolutionExplorer": false
 }

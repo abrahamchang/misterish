@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import Card from './Card';
-import CardSection from './CardSection';
-import Button from './Button';
+import Card from '../common/Card';
+import CardSection from '../common/CardSection';
+import Button from '../common/Button';
 
 const MisteryDetail = ({ mistery }) => {
 

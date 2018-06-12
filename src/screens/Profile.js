@@ -6,9 +6,9 @@ import { Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 {/*  */}
 import Card from '../components/common/Card';
-import CardSection from '../components/common/CardSection';
-import MisteryDetail from '../components/MisteryDetail';
 import Input from '../components/common/Input';
+import UserDetails from '../components/profile/UserDetails';
+import MisteryDetail from '../components/profile/MisteryDetail';
 
 class Profile extends Component {
 
@@ -29,120 +29,7 @@ class Profile extends Component {
         return (
 
             <Card>
-                <ScrollView>
-                {/* Nickname + Avatar + Level + Add Friend Button Section */}
-                <CardSection style={{ flex: 1 }}>
-                    {/* 1 Colum n*/}
-                    <View style={ styles.thumbnailContainerStyle }>
-                        <Image
-                            style={ styles.thumbnailStyle }
-                            source={require('../assets/avatar/level1male.png')}
-                        />
-                    </View>
-                    {/* 2 Column */}
-                    <View style={styles.headerContentStyle}>
-                            <Text style={styles.headerTextStyle}>CrazyBK</Text>
-                            {/* Input to Change Nickname */}
-                            <Input
-                                label = "Change Nickname"
-                                value={this.state.text}
-                                onChangeText={text => this.setState({ text })}
-                            />
-                        <Text style={styles.levelTextStyle}>Level 0</Text>
-                    </View>
-                </CardSection>
-
-                {/* Mistery List */}
-                <CardSection>
-
-                    <View>
-                        <Text style={styles.titleTextStyle}>Misteries List</Text>
-                    </View>
-
-                </CardSection>
-
-                <CardSection>
-                    {/* 1 Colum n*/}
-                    <View style={styles.thumbnailContainerStyle}>
-                        <Image
-                            style={styles.mlThumbnailStyle}
-                            source={require('../assets/mistery/unimet1.png')}
-                        />
-                    </View>
-                    {/* 2 Column */}
-                    <View style={styles.headerContentStyle}>
-                            <Text style={styles.mlHeaderTextStyle}>Misterio Loco</Text>
-                            <Text style={styles.flLevelTextStyle}>Difficulty:</Text>
-                    </View>
-                </CardSection>
-
-                {/* High Scores List */}
-                <CardSection>
-
-                    <View>
-                        <Text style = { styles.titleTextStyle }>High Scores</Text>
-                    </View>
-
-                    <ScrollView>
-                        {/*<HighscoreList />*/}
-                    </ScrollView>
-
-                </CardSection>
-
-
-                {/* Friend List */}
-                <CardSection>
-                    <View>
-                        <Text style = { styles.titleTextStyle }>Friend List</Text>
-                    </View>
-                </CardSection>
-
-                <CardSection>
-                    {/* 1 Colum n*/}
-                    <View style={styles.thumbnailContainerStyle}>
-                        <Image
-                            style={styles.flThumbnailStyle}
-                            source={require('../assets/avatar/level1female.png')}
-                        />
-                    </View>
-                    {/* 2 Column */}
-                    <View style={styles.headerContentStyle}>
-                        <Text style={styles.flHeaderTextStyle}>Princess00</Text>
-                        <Text style={styles.flLevelTextStyle}>Level 4</Text>
-                    </View>
-                </CardSection>
-
-                <CardSection>
-                    {/* 1 Colum n*/}
-                    <View style={styles.thumbnailContainerStyle}>
-                        <Image
-                            style={styles.flThumbnailStyle}
-                            source={require('../assets/avatar/level5.png')}
-                        />
-                    </View>
-                    {/* 2 Column */}
-                    <View style={styles.headerContentStyle}>
-                        <Text style={styles.flHeaderTextStyle}>420BlazeIt</Text>
-                        <Text style={styles.flLevelTextStyle}>Level 5</Text>
-                    </View>
-                </CardSection>
-
-                <CardSection>
-                    {/* 1 Colum n*/}
-                    <View style={styles.thumbnailContainerStyle}>
-                        <Image
-                            style={styles.flThumbnailStyle}
-                            source={require('../assets/avatar/level10.png')}
-                        />
-                    </View>
-                    {/* 2 Column */}
-                    <View style={styles.headerContentStyle}>
-                        <Text style={styles.flHeaderTextStyle}>IWearFedoras</Text>
-                        <Text style={styles.flLevelTextStyle}>Level 10</Text>
-                    </View>
-                </CardSection>
-
-                </ScrollView>
+                <UserDetails></UserDetails>
             </Card>
 
 

@@ -3,6 +3,8 @@ import { ScrollView } from 'react-native';
 import MisteryDetail from './MisteryDetail';
 
 
+
+
 class MisteryList extends Component {
 
     state = { misteries: [] };
