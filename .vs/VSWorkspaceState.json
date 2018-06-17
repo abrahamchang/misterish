@@ -2,11 +2,13 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\assets",
+    "\\src\\assets\\avatar",
     "\\src\\components",
     "\\src\\components\\common",
-    "\\src\\components\\Profile",
+    "\\src\\components\\profile",
     "\\src\\screens"
   ],
-  "SelectedNode": "\\src\\components\\Profile\\UserDetails.js",
+  "SelectedNode": "\\src\\components\\profile\\FriendList.js",
   "PreviewInSolutionExplorer": false
 }
