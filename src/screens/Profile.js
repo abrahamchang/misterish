@@ -8,14 +8,17 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import Card from '../components/common/Card';
 import Input from '../components/common/Input';
 import UserDetails from '../components/profile/UserDetails';
-import MisteryDetail from '../components/profile/MisteryDetail';
+import MisteryDetailProfile from '../components/profile/MisteryDetailProfile';
+import CardSection from '../components/common/CardSection';
+
+import MisteryDetail from '../components/MisteryDetail';
 
 class Profile extends Component {
 
     state = { text: '' };
 
     prepareData() {
-        const { params } = this.props.navigation.state;
+        const params = this.props.navigation.state.params;
         const keys = Object.keys(params);
         const data = [];
         keys.forEach((key) => {
@@ -24,14 +27,39 @@ class Profile extends Component {
         return data;
     }
 
+    componentDidMount() {
+        const { status } = Permissions.askAsync(Permissions.CAMERA);
+    }
+
     render() {
 
         return (
 
-            <Card>
-                <UserDetails></UserDetails>
-            </Card>
+            <ScrollView>
+                <Card>
+                    <CardSection>
+                        <UserDetails></UserDetails>
+                    </CardSection>
 
+                    <CardSection>
+                        <FlatList
+                            numColumns={2}
+                            data={this.prepareData()}
+                            keyExtractor={(item) => item.id}
+                            renderItem={(item) => <MisteryDetail
+                                id={item.id}
+                                imageURL={item.item.imageURL}
+                                name={item.item.name}
+                                description={item.item.description}
+                                difficulty={item.item.dificulty}
+                                userID={item.item.userID}
+                                reviews={item.item.reviews}
+                                onPress={() => this.onPress(item.item.id)}
+                            />}
+                        />
+                    </CardSection>
+                </Card>
+            </ScrollView>
 
         );
     }

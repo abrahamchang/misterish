@@ -13,7 +13,9 @@ const UserDetails = () => {
     const {
         thumbnailContainerStyle,
         headerContentStyle,
-        headerTextStyle
+        headerTextStyle,
+        thumbnailStyle,
+        levelTextStyle
     } = styles;
 
     return (
