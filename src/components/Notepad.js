@@ -68,7 +68,7 @@ export default class Notepad extends Component {
 		if(rend){
 			if(item.type === 'img'){
 				return (
-					<View style={{ height: 50, width: 50 }}>
+					<View style={{width: '100%', height: '100%'}}>
 						<Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={{ uri: item.clue }}/>
 					</View>
 				);
