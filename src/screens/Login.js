@@ -28,7 +28,6 @@ class Login extends Component {
 
     componentWillMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            console.log(user);
             if (user) {
                 firebase.database().ref(`/users/${user.uid}`).once('value').then((response) => {
                     let datos = {
@@ -82,13 +81,13 @@ class Login extends Component {
                 switch (err.message) {
                     case 'The email address is badly formatted.':
                         this.setState({ errorText: 'Invalid email address', cargando: false, error: true });
-                    break;
+                        break;
                     case 'There is no user record corresponding to this identifier. The user may have been deleted.':
                         this.setState({ errorText: 'User not found', cargando: false, error: true });
-                    break;
+                        break;
                     case 'The password is invalid or the user does not have a password.':
                         this.setState({ errorText: 'Invalid password', cargando: false, error: true });
-                    break;
+                        break;
                     default:
                         this.setState({ errorText: 'Empty Field', cargando: false, error: true });
                 }

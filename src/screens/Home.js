@@ -12,13 +12,23 @@ class Home extends Component {
     }
 
     prepareData() {
-        const params = this.props.navigation.state.params.params;
-        const keys = Object.keys(params);
-        const data = [];
-        keys.forEach((key) => {
-            data.push(params[key]);
-        });
-        return data;
+        if (this.props.navigation.state.params.params.params) {
+            const params = this.props.navigation.state.params.params.params;
+            const keys = Object.keys(params);
+            const data = [];
+            keys.forEach((key) => {
+                data.push(params[key]);
+            });
+            return data;
+        } else {
+            const params = this.props.navigation.state.params.params;
+            const keys = Object.keys(params);
+            const data = [];
+            keys.forEach((key) => {
+                data.push(params[key]);
+            });
+            return data;
+        }
     }
 
     componentDidMount() {

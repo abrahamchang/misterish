@@ -16,7 +16,6 @@ class Profile extends Component {
 
     prepareData() {
         const user = this.props.navigation.state.params.user;
-        console.log(user);
         const keys = Object.keys(params);
         const data = [];
         keys.forEach((key) => {
