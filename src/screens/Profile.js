@@ -21,7 +21,7 @@ class Profile extends Component {
     state = { text: '' };
 
     prepareData() {
-        const params = this.props.navigation.state.params;
+        const user = this.props.navigation.state.params.user;
         const keys = Object.keys(params);
         const data = [];
         keys.forEach((key) => {
@@ -30,14 +30,9 @@ class Profile extends Component {
         return data;
     }
 
-    componentDidMount() {
-        const { status } = Permissions.askAsync(Permissions.CAMERA);
-    }
-
     render() {
-
+        this.prepareData();
         return (
-
             <ScrollView>
                 <Card>
                     <CardSection>
@@ -81,11 +76,6 @@ class Profile extends Component {
                             />}
                         />
                     </CardSection>
-                    {/* Friends List */}
-                    <CardSection>
-                        <FriendList></FriendList>
-                    </CardSection>
-
                 </Card>
             </ScrollView>
 

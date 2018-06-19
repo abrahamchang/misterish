@@ -11,6 +11,7 @@ import Notepad from '../components/Notepad';
 
 const MAXIMUM_RADIUS = 0.15;
 const MAXIMUM_TIME_DIFFERENCE = 5;
+const LOCATION_TIME_INTERVAL = 5000;
 
 class CameraScanner extends Component {
     state = {
@@ -23,7 +24,8 @@ class CameraScanner extends Component {
         clueIndex: 0,
         GIF: false,
         modalVisible: false,
-        victoria: false
+        victoria: false,
+        isGPSActive: true
     };
 
     async componentWillMount() {
@@ -46,28 +48,22 @@ class CameraScanner extends Component {
             const estado = await Location.getProviderStatusAsync();
             if (estado.locationServicesEnabled) {
                 let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-                console.log(location);
-                if (this.state.isMounted) {
-                    this.setState({ location });
-                }
+                this.setState({ isGPSActive:  true, location });
             } else {
-                // Falta manejo del caso en el que no haya servicio de GPS
-                this.setState({ location: undefined });
+                this.setState({ isGPSActive: false });
             }
         }
-    }
-
-    async componentWillUpdate() {
-        if (this.state.clues[this.state.clueIndex]) {
-            if (this.state.clues[this.state.clueIndex].type === 'location') {
-                await this.getLocationAsync();
-                this._handleLocationReading();
-            }
-        }
+        this.scheduleLocation();
     }
 
     async componentWillUnmount() {
         this.setState({ isMounted: false });
+    }
+
+    async scheduleLocation() {
+        if (this.state.clues[this.state.clueIndex].type === 'location') {
+            setTimeout(() => this.getLocationAsync(), LOCATION_TIME_INTERVAL);
+        }
     }
 
     findClues() {
@@ -76,6 +72,7 @@ class CameraScanner extends Component {
             .then((snapshotClues) => {
                 const clues = snapshotClues.val();
                 this.setState({ cargando: false, clues });
+                this.scheduleLocation();
             })
             .catch((error) => {
                 console.error(error);
@@ -87,7 +84,7 @@ class CameraScanner extends Component {
     }
 
     render() {
-        const { doIHaveCameraPermission } = this.state;
+        const { doIHaveCameraPermission, doIHaveLocationPermission } = this.state;
         if (this.state.cargando) {
             this.findClues();
             return (
@@ -97,17 +94,16 @@ class CameraScanner extends Component {
                 </View>
             );
         } else {
-            if (doIHaveCameraPermission === null) {
-                return (
-                    <View>
-                        <Text>Requesting Permission to use Your Camera</Text>
-                    </View>
-                );
-            } else if (doIHaveCameraPermission === false) {
-                // Handling error
+            if (doIHaveCameraPermission === null || doIHaveLocationPermission === null) {
                 return (
                     <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>You Did Not Gave Us Permission to Use Your Camera</Text>
+                        <Text style={errorText}>Requesting Permissions</Text>
+                    </View>
+                );
+            } else if (doIHaveCameraPermission === false || doIHaveLocationPermission === false) {
+                return (
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>We Didn't Get the Required Permissions to Play this Mystery</Text>
                     </View>
                 );
             } else {
@@ -148,12 +144,30 @@ class CameraScanner extends Component {
                 } else {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)} />
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                                {this.gpsAlert()}
+                            </Notepad>
                         </BarCodeScanner>
                     );
                 }
             }
         }
+    }
+
+    gpsAlert() {
+        if (!this.state.isGPSActive) {
+            return (
+                <Alert
+                    title={'GPS Not Active'}
+                    text={'Please turn on location in your smartphone to continue playing'}
+                    onPressOk={this.locationOk.bind(this)}
+                />
+            );
+        }
+    }
+
+    locationOk() {
+        this.setState({ isGPSActive: true });
     }
 
     _handleBarCodeRead = ({ type, data }) => {
@@ -174,6 +188,7 @@ class CameraScanner extends Component {
                 const actualLatitude = this.state.location.coords.latitude;
                 const time = separatedString[2];
                 const actualTime = moment().format('DD/MM/YYYY HH:mm');
+                console.log()
                 if (time.length > 0) {
                     if (this.getDistanceFromLatLonInKm(latitude, longitude, actualLatitude, actualLongitude) < MAXIMUM_RADIUS
                         && Math.abs(moment(time).diff(moment(actualTime), 'minutes')) < MAXIMUM_TIME_DIFFERENCE) {
@@ -245,6 +260,7 @@ class CameraScanner extends Component {
                 //error
             }
             this.setState({ clueIndex: index, GIF: true });
+            this.scheduleLocation();
             setTimeout(() => this.setState({ GIF: false }), 6200);
         }
     }

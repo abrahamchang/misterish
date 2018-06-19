@@ -67,7 +67,6 @@ export default class Notepad extends Component {
 	
 		if(rend){
 			if(item.type === 'img'){
-				console.log(item.clue);
 				return (
 					<View style={{width: '100%', height: '100%'}}>
 						<Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={{ uri: item.clue }}/>
@@ -200,6 +199,7 @@ const styles = {
 	},
 	buttonContainerStyle: {
 		borderRadius: 5,
+		paddingTop: 20,
 		margin:NOTEPAD_WIDTH*0.025,
 		position: 'absolute',
 		bottom: 0,

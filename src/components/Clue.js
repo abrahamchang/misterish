@@ -37,7 +37,7 @@ export default class Clue extends Component {
 		} else if (this.props.type === 'img') {
 			return (
 				<View style={{ padding: '2%' }}>
-					<TouchableOpacity style={this.props.checked ? styles.containerCheck : styles.containerNotCheck } onPress={this.props.renderMidView}>
+					<TouchableOpacity onPress={this.props.renderMidView} style={this.props.checked ? styles.containerCheck : styles.containerNotCheck }>
 						<Icon
 							name={this.props.checked ? 'done' : 'image'}
 							color={this.props.checked ? '#553285' : '#00D972'}
