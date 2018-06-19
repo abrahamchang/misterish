@@ -17,6 +17,7 @@ class Login extends Component {
     state = {
         email: '',
         password: '',
+        errorText: '',
         cargando: false,
         error: false
     };
@@ -27,13 +28,21 @@ class Login extends Component {
 
     componentWillMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            console.log(user);
             if (user) {
-                const { datos } = this.props.navigation.state.params;
-                const resetAction = StackActions.reset({
-                   index: 0,
-                   actions: [NavigationActions.navigate({ routeName: 'Root', params: this.props.navigation.state.params })]
+                firebase.database().ref(`/users/${user.uid}`).once('value').then((response) => {
+                    let datos = {
+                        user: response.val(),
+                        params: this.props.navigation.state.params
+                    };
+                    const resetAction = StackActions.reset({
+                       index: 0,
+                       actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                    });
+                    this.props.navigation.dispatch(resetAction);
+                }).catch((err) => {
+                    console.log(err);
                 });
-                this.props.navigation.dispatch(resetAction);
             }
         });
     }
@@ -42,28 +51,62 @@ class Login extends Component {
         this.authSubscription();
     }
 
+    errorText() {
+        if (this.state.error) {
+            return (
+                <Text style={styles.errorText}>{this.state.errorText}</Text>
+            );
+        }
+    }
+
     onClickLogin() {
         const { email, password } = this.state;
         this.setState({ cargando: true });
         firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password)
             .then((user) => {
-                const resetAction = StackActions.reset({
-                   index: 0,
-                   actions: [NavigationActions.navigate({ routeName: 'Root', params: this.props.navigation.state.params })]
+                firebase.database().ref(`/users/${user.uid}`).once('value').then((response) => {
+                    let datos = {
+                        user: response.val(),
+                        params: this.props.navigation.state.params
+                    };
+                    const resetAction = StackActions.reset({
+                       index: 0,
+                       actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                    });
+                    this.props.navigation.dispatch(resetAction);
+                }).catch((err) => {
+                    console.log(err);
                 });
-                this.props.navigation.dispatch(resetAction);
             })
             .catch((err) => {
-                this.setState({ cargando: false, error: true })
+                switch (err.message) {
+                    case 'The email address is badly formatted.':
+                        this.setState({ errorText: 'Invalid email address', cargando: false, error: true });
+                    break;
+                    case 'There is no user record corresponding to this identifier. The user may have been deleted.':
+                        this.setState({ errorText: 'User not found', cargando: false, error: true });
+                    break;
+                    case 'The password is invalid or the user does not have a password.':
+                        this.setState({ errorText: 'Invalid password', cargando: false, error: true });
+                    break;
+                    default:
+                        this.setState({ errorText: 'Empty Field', cargando: false, error: true });
+                }
             });
     }
 
     onPressGuest() {
-        const resetAction = StackActions.reset({
-            index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'Root', params: this.props.navigation.state.params })]
-        });
-        this.props.navigation.dispatch(resetAction);
+        if (!this.state.cargando) {
+            let datos = {
+                user: null,
+                params: this.props.navigation.state.params
+            };
+            const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+            });
+            this.props.navigation.dispatch(resetAction);
+        }
     }
 
     onPressForgot() {
@@ -123,6 +166,7 @@ class Login extends Component {
                                 selectionColor={'rgba(54, 23, 94, 0.7)'}
                             />
                         </View>
+                        {this.errorText()}
                     </View>
                     <View style={styles.loginButtonContainer}>
                         {this.loadOrButton()}
@@ -210,6 +254,11 @@ const styles = {
         textDecorationLine: 'underline',
         paddingBottom: 5,
         fontSize: 16
+    },
+    errorText: {
+        alignSelf: 'center',
+        color: 'red',
+        fontSize: 12
     }
 };
 

@@ -15,7 +15,8 @@ class Profile extends Component {
     state = { text: '' };
 
     prepareData() {
-        const { params } = this.props.navigation.state;
+        const user = this.props.navigation.state.params.user;
+        console.log(user);
         const keys = Object.keys(params);
         const data = [];
         keys.forEach((key) => {
@@ -25,9 +26,8 @@ class Profile extends Component {
     }
 
     render() {
-
+        this.prepareData();
         return (
-
             <Card>
                 <ScrollView>
                 {/* Nickname + Avatar + Level + Add Friend Button Section */}

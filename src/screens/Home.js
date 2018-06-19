@@ -8,19 +8,11 @@ import MisteryDetail from '../components/MisteryDetail';
 class Home extends Component {
 
     onPress(id) {
-       const resetItems = StackActions.reset({
-           index: 0,
-           actions: [{
-               type: 'Navigation/INIT',
-               routeName: 'Scanner',
-               params: id
-           }]
-       });
-       this.props.navigation.dispatch(resetItems);
+       this.props.navigation.navigate({ routeName: 'Scanner', params: id });
     }
 
     prepareData() {
-        const params = this.props.navigation.state.params;
+        const params = this.props.navigation.state.params.params;
         const keys = Object.keys(params);
         const data = [];
         keys.forEach((key) => {

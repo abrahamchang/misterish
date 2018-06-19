@@ -16,25 +16,38 @@ class Loading extends Component {
             firebase.initializeApp(config);
         }
         this.getItem('/misteryMetadata').then((result) => {
-            const datos = result.val();
             firebase.auth().onAuthStateChanged((user) => {
                 if (user !== null) {
-                    const resetAction = StackActions.reset({
-                       index: 0,
-                       actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                    firebase.database().ref(`/users/${user.uid}`).once('value').then((response) => {
+                        let datos = {
+                            params: result.val(),
+                            user: response.val()
+                        };
+                        const resetAction = StackActions.reset({
+                           index: 0,
+                           actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                        });
+                        this.props.navigation.dispatch(resetAction);
+                    }).catch((err) => {
+                        console.log(err);
                     });
-                    this.props.navigation.dispatch(resetAction);
                 } else {
+                    let datos = {
+                        params: result.val(),
+                        user: null
+                    };
                     const resetAction = StackActions.reset({
                        index: 0,
                        actions: [NavigationActions.navigate({ routeName: 'Login', params: datos })]
                     });
                     this.props.navigation.dispatch(resetAction);
                 }
-            })
+            }).catch((err) => {
+                console.log(err);
+            });
         }).catch((err) => {
             console.log(err);
-            });
+        });
 
     }
 
