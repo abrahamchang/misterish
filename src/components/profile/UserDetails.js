@@ -5,7 +5,7 @@ import CardSection from '../../components/common/CardSection';
 
 const UserDetails = () => {
     
-    var dummy = {
+    var user = {
         name: 'IWearFedoras',
         lvl: '1'
     };
@@ -33,9 +33,9 @@ const UserDetails = () => {
 
             <View style={headerContentStyle}>
 
-                <Text style={headerTextStyle}>{dummy.name}</Text>
+                <Text style={headerTextStyle}>{user.name}</Text>
 
-                <Text style={levelTextStyle}>{dummy.lvl}</Text>
+                <Text style={levelTextStyle}>{user.lvl}</Text>
 
             </View>
 
@@ -47,11 +47,17 @@ const UserDetails = () => {
 
 const styles = {
     thumbnailContainerStyle: {
-    
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+        marginRight: 10
     },
 
     headerContentStyle: {
-
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-around'
     },
 
     headerTextStyle: {
@@ -59,7 +65,8 @@ const styles = {
     },
 
     thumbnailStyle: {
-
+        height: 100,
+        width: 100
     },
 
     levelTextStyle: {

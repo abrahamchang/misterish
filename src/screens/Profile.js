@@ -41,12 +41,13 @@ class Profile extends Component {
             <ScrollView>
                 <Card>
                     <CardSection>
+                    {/* User Details: Avatar, Name, Level */}
                         <UserDetails></UserDetails>
                     </CardSection>
                     {/* Completed / In Progress Misteries */}
                     <CardSection>
                         <FlatList
-                            numColumns={2}
+                            numColumns={3}
                             data={this.prepareData()}
                             keyExtractor={(item) => item.id}
                             renderItem={(item) => <MisteryDetail
@@ -93,70 +94,6 @@ class Profile extends Component {
 }
 
 const styles = {
-
-    buttonContentStyle: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    buttonStyle: {
-        height: 50,
-        width: 50,
-    },
-
-    headerContentStyle: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-around'
-    },
-
-    headerTextStyle: {
-        fontSize: 30
-    },
-
-    titleTextStyle: {
-        fontSize: 30,
-        marginLeft: 10
-    },
-
-    flHeaderTextStyle: {
-        fontSize: 24
-    },
-
-    mlHeaderTextStyle: {
-        fontSize: 24
-    },
-
-    levelTextStyle: {
-        fontSize: 18
-    },
-
-    flLevelTextStyle: {
-        fontSize: 12
-    },
-
-    thumbnailStyle: {
-        height: 100,
-        width: 100
-    },
-
-    flThumbnailStyle: {
-        height: 80,
-        width: 80
-    },
-
-    mlThumbnailStyle: {
-        height: 80,
-        width: 80
-    },
-
-    thumbnailContainerStyle: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 10,
-        marginRight: 10
-    },
 
 };
 
