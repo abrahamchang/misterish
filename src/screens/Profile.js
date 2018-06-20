@@ -15,13 +15,7 @@ class Profile extends Component {
     state = { text: '' };
 
     prepareData() {
-        const user = this.props.navigation.state.params.user;
-        const keys = Object.keys(params);
-        const data = [];
-        keys.forEach((key) => {
-            data.push(params[key]);
-        });
-        return data;
+        console.log(this.props.navigation.state.params.user);
     }
 
     render() {

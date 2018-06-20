@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import Loading from './src/screens/Loading';
 import Developing from './src/screens/Developing';
-import Settings from './src/screens/Settings';
+import MysteryCreator from './src/screens/MysteryCreator';
 import { Home } from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
 import Header from './src/components/Header';
@@ -12,6 +12,7 @@ import Login from './src/screens/Login';
 import Recovery from './src/screens/Recovery';
 import Register from './src/screens/Register';
 import Profile from './src/screens/Profile'; 
+import TextClue from './src/screens/TextClue';
 
 class Router extends Component {
     render() {
@@ -74,8 +75,21 @@ const Navigator = createStackNavigator(
                         )
                     }
                 },
-                Settings: {
-                    screen: Settings,
+                MysteryCreator: {
+                    screen: createStackNavigator({
+                        Main: {
+                            screen: MysteryCreator,
+                            navigationOptions: {
+                                header: null
+                            }
+                        },
+                        TextClue: {
+                            screen: TextClue,
+                            navigationOptions: {
+                                header: null
+                            }
+                        }
+                    }),
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image

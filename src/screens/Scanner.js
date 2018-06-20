@@ -67,10 +67,13 @@ class CameraScanner extends Component {
     }
 
     findClues() {
-        const index = this.props.navigation.state.params;
+        let index = this.props.navigation.state.params;
+        if (index === undefined) {
+            index = 0;
+        }
         firebase.database().ref(`/misteryClues/${index}`).once('value')
             .then((snapshotClues) => {
-                const clues = snapshotClues.val();
+                let clues = snapshotClues.val();
                 this.setState({ cargando: false, clues });
                 this.scheduleLocation();
             })
@@ -97,7 +100,7 @@ class CameraScanner extends Component {
             if (doIHaveCameraPermission === null || doIHaveLocationPermission === null) {
                 return (
                     <View style={styles.errorContainer}>
-                        <Text style={errorText}>Requesting Permissions</Text>
+                        <Text style={styles.errorText}>Requesting Permissions</Text>
                     </View>
                 );
             } else if (doIHaveCameraPermission === false || doIHaveLocationPermission === false) {

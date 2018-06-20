@@ -11,7 +11,8 @@ class Register extends Component {
         verificacionPassword: '',
         cargando: false,
         emailError: false,
-        passwordError: false
+        passwordError: false,
+        errorText: ''
     };
 
     underlineColorEmail() {
@@ -29,10 +30,9 @@ class Register extends Component {
     onPressSubmit() {
         this.setState({ cargando: true });
         if (this.state.password === this.state.verificacionPassword && this.state.password.length > 5) {
-            firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+            firebase.auth().createUserWithEmailAndPassword(this.state.email.toLowerCase(), this.state.password)
                 .then((authUser) => {
                     const { email, uid } = authUser.user;
-                    this.props.navigation.goBack(null);
                     firebase.database()
                         .ref(`users/${uid}`)
                         .set({
@@ -40,26 +40,63 @@ class Register extends Component {
                             email: email,
                             lvl: '0',
                             fndList: {
-                                userID: ''
+                                userID: [
+                                    {
+                                        id: ''
+                                    }
+                                ]
                             },
                             mstrList: {
-                                id: ''
+                                id: [
+                                    {
+                                        id: ''
+                                    }
+                                ]
+                            },
+                            playingList: {
+                                completedMysteries: [
+                                    {
+                                        id: ''
+                                    }
+                                ],
+                                unfinishedMysteries: [
+                                    {
+                                        id: '',
+                                        clueIndex: 0
+                                    }
+                                ]
                             }
+                        }).then(() => {
+                            this.props.navigation.goBack(null);                            
                         });
                 })
                 .catch(() => {
-                    this.setState({
-                        password: '',
-                        verificacionPassword: '',
-                        cargando: false,
-                        emailError: true
-                    });
+                    this.setState({ errorText: 'Invalid email address', emailError: true, cargando: false });
                 });
         } else {
-            this.setState({
-                cargando: false,
-                passwordError: true
-            });
+            if (this.state.password === this.state.verificacionPassword) {
+                this.setState({
+                    cargando: false,
+                    passwordError: true,
+                    errorText: 'Passwords Don\'t Match'
+                });
+            } else {
+                this.setState({
+                    cargando: false,
+                    passwordError: true,
+                    errorText: 'Passwords Is Too Short'
+                });
+            }
+        }
+    }
+
+    errorText() {
+        if (this.state.emailError || this.state.passwordError) {
+            return (
+                <View style={{ height: '10%' }}>
+                    <Text style={styles.errorText}>{this.state.errorText}</Text>
+                </View>
+            );
         }
     }
 
@@ -129,6 +166,7 @@ class Register extends Component {
                     <View style={styles.loginButtonContainer}>
                         {this.loadOrButton()}
                     </View>
+                    {this.errorText()}
                 </View>
             </View>
         );
@@ -171,5 +209,10 @@ const styles = {
         height: '10%',
         width: '50%',
         alignSelf: 'center'
+    },
+    errorText: {
+        alignSelf: 'center',
+        color: 'red',
+        fontSize: 12
     }
 };
