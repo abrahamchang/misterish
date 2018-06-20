@@ -32,11 +32,12 @@ class Register extends Component {
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
                 .then((authUser) => {
                     const { email, uid } = authUser.user;
-                    this.props.navigation.goBack(null);
                     firebase.database()
                         .ref(`users/${uid}`)
                         .set({
                             userID: uid,
+                            username: 'Abraham98',
+                            description: 'Espera lo mejor, preparate para lo peor y acepta lo que venga',
                             email: email,
                             lvl: '0',
                             fndList: {
@@ -44,8 +45,13 @@ class Register extends Component {
                             },
                             mstrList: {
                                 id: ''
+                            },
+                            playingList: {
+                                completedMysteries: '',
+                                unfinishedMysteries: ''
                             }
                         });
+                    this.props.navigation.goBack(null);
                 })
                 .catch(() => {
                     this.setState({

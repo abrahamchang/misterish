@@ -6,16 +6,27 @@ import firebase from 'firebase'
 class Profile extends Component {
 
     state = {
-        tabIndex: 1
+        tabIndex: 1,
+        username: 'Guest',
+        lvl: '0',
+        description: 'Register for a more complete gaming experience.'
     };
 
-    ensayoError() {
-        console.log('hola');
-        //console.log(this.props.navigation.state.params.params.params.user);
+    componentWillMount() {
+        if (this.props.navigation.state.params.user) {
+            this.setState({
+                username: this.props.navigation.state.params.user.username,
+                lvl: this.props.navigation.state.params.user.lvl,
+                description: this.props.navigation.state.params.user.description
+            });
+        }
     }
 
+
+
+
     renderTab() {
-        this.ensayoError();
+
         const { tabSectionContainer } = styles;
         if (this.state.tabIndex === 0) {
             return (
@@ -91,26 +102,53 @@ class Profile extends Component {
                                 fontWeight: 'bold',
                                 textAlign: 'center'
                             }}>
-                            Abraham Chang | Lvl. 1
+                            {this.state.username} | Lvl. {this.state.lvl}
                         </Text>
 
                         <View style={detailsContainer}>
-                            <Text style={{ textAlign: 'center' }}>Espera lo mejor, preparate para lo peor y acepta lo que venga.</Text>
+                            <View style={{ marginHorizontal: '10%' }}>
+                                <Text style={{
+                                    textAlign: 'center',
+                                    color: 'white',
+                                }}>
+                                    {this.state.description}
+                                </Text>
+                            </View>
+                            <View style={{
+                                height: '20%',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <TouchableOpacity
+                                    style={{
+                                        width: '30%',
+                                        height: '100%',
+                                        backgroundColor: 'white',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: 10,
+                                        margin: 4
+                                    }}
+                                /*onPress={() => this.logOut()}*/
+                                >
+                                    <Text style={{ color: '#553285' }}>Change photo</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        width: '30%',
+                                        height: '100%',
+                                        backgroundColor: 'white',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: 10,
+                                        margin: 4
+                                    }}
+                                    onPress={() => this.logOut()}
+                                >
+                                    <Text style={{ color: '#553285' }}>Logout</Text>
+                                </TouchableOpacity>
+                            </View>
 
-
-                            <TouchableOpacity
-                                style={{
-                                    width: '30%',
-                                    height: '20%',
-                                    backgroundColor: 'white',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: 10
-                                }}
-                                onPress={() => this.logOut()}
-                            >
-                                <Text style={{ color: '#553285' }}>Logout</Text>
-                            </TouchableOpacity>
 
                         </View>
                     </View>
@@ -151,13 +189,10 @@ const styles = {
     },
     detailsContainer: {
         flex: 1,
-        borderColor: '#553285',
+        backgroundColor: '#553285',
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginLeft: '1%',
-        marginRight: '1%',
-        borderWidth: 2,
         borderRadius: 5,
     },
     imageStyle: {
