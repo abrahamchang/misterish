@@ -3,7 +3,7 @@ import { View, Text, Image } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import Loading from './src/screens/Loading';
-import Developing from './src/screens/Developing';
+
 import Settings from './src/screens/Settings';
 import { Home } from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
@@ -87,7 +87,7 @@ const Navigator = createStackNavigator(
                 },
             },
             {
-                initialRouteName: 'Home',
+                initialRouteName: 'Profile',
                 backBehavior: false,
                 tabBarOptions: {
                     showLabel: false,
@@ -107,7 +107,7 @@ const Navigator = createStackNavigator(
         }
     },
     {
-        initialRouteName: 'Loading',
+        initialRouteName: 'Root',
         navigationOptions: {
             header: <Header tituloHeader='Misterish' />
         }
