@@ -67,7 +67,10 @@ class CameraScanner extends Component {
     }
 
     findClues() {
-        const index = this.props.navigation.state.params;
+        var index = this.props.navigation.state.params;
+        if (index === undefined) {
+            index = 0;
+        }
         firebase.database().ref(`/misteryClues/${index}`).once('value')
             .then((snapshotClues) => {
                 const clues = snapshotClues.val();
