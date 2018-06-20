@@ -87,7 +87,7 @@ const Navigator = createStackNavigator(
                 },
             },
             {
-                initialRouteName: 'Profile',
+                initialRouteName: 'Home',
                 backBehavior: false,
                 tabBarOptions: {
                     showLabel: false,
@@ -107,7 +107,7 @@ const Navigator = createStackNavigator(
         }
     },
     {
-        initialRouteName: 'Root',
+        initialRouteName: 'Loading',
         navigationOptions: {
             header: <Header tituloHeader='Misterish' />
         }

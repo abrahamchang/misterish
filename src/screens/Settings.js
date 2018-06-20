@@ -5,33 +5,14 @@ import { StackActions, NavigationActions } from 'react-navigation';
 
 class Settings extends Component {
 
-    logOut() {
-        firebase.auth().signOut().then(() => {
-            const resetItems = StackActions.reset({
-                index: 0,
-                actions: [{
-                    type: 'Navigation/INIT',
-                    routeName: 'Loading'
-                    //AQUI ME FALTA ALGO PERO NO ME ACUERDO
-                }]
-            });
-            this.props.navigation.dispatch(resetItems);
-        });
-    }
 
     render() {
-        const { ventanaStyle, buttonStyle } = styles;
+        const { ventanaStyle } = styles;
         return (
             <View style={{ flex: 1 }}>
-            <View style={ventanaStyle}>
-                <Text style={{ color: 'white' }}>Vista en Desarrollo: Settings</Text>
-            </View>
-
-            <View style={ventanaStyle}>
-                <TouchableOpacity style={buttonStyle} onPress={() => this.logOut()}>
-                    <Text style={{ color: '#553285' }}>Logout</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={ventanaStyle}>
+                    <Text style={{ color: 'white' }}>Vista en Desarrollo: Settings</Text>
+                </View>
             </View>
         );
     }
@@ -45,14 +26,6 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center'
     },
-    buttonStyle: {
-        width: '30%',
-        height: '20%',
-        backgroundColor: 'white',
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
 }
 
 export default Settings;

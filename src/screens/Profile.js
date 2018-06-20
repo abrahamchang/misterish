@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { View, Image, Text, TouchableOpacity } from 'react-native';
-
-import Developing from './Developing';
-
-import { createBottomTabNavigator } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
+import firebase from 'firebase'
 
 class Profile extends Component {
 
@@ -11,25 +9,30 @@ class Profile extends Component {
         tabIndex: 1
     };
 
-    renderTab(){
+    ensayoError() {
+        console.log('hola');
+        //console.log(this.props.navigation.state.params.params.params.user);
+    }
 
+    renderTab() {
+        this.ensayoError();
         const { tabSectionContainer } = styles;
-        if(this.state.tabIndex === 0 ){
-            return(
+        if (this.state.tabIndex === 0) {
+            return (
                 <View style={tabSectionContainer}>
-                   <Text>A</Text> 
+                    <Text>A</Text>
                 </View>
             );
         }
-        else if(this.state.tabIndex === 1 /*|| undefined || null*/){
-            return(
+        else if (this.state.tabIndex === 1) {
+            return (
                 <View style={tabSectionContainer}>
                     <Text>B</Text>
                 </View>
             );
         }
-        else{
-            return(
+        else {
+            return (
                 <View style={tabSectionContainer}>
                     <Text>C</Text>
                 </View>
@@ -37,12 +40,26 @@ class Profile extends Component {
         }
     }
 
-    changeTab(toTab){
+    changeTab(toTab) {
         this.setState({ tabIndex: toTab });
     }
 
-    amIActive(currentTab){
+    amIActive(currentTab) {
         return this.state.tabIndex === currentTab;
+    }
+
+    logOut() {
+        firebase.auth().signOut().then(() => {
+            const resetItems = StackActions.reset({
+                index: 0,
+                actions: [{
+                    type: 'Navigation/INIT',
+                    routeName: 'Loading'
+                    //AQUI ME FALTA ALGO PERO NO ME ACUERDO
+                }]
+            });
+            this.props.navigation.dispatch(resetItems);
+        });
     }
 
     render() {
@@ -79,25 +96,41 @@ class Profile extends Component {
 
                         <View style={detailsContainer}>
                             <Text style={{ textAlign: 'center' }}>Espera lo mejor, preparate para lo peor y acepta lo que venga.</Text>
+
+
+                            <TouchableOpacity
+                                style={{
+                                    width: '30%',
+                                    height: '20%',
+                                    backgroundColor: 'white',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: 10
+                                }}
+                                onPress={() => this.logOut()}
+                            >
+                                <Text style={{ color: '#553285' }}>Logout</Text>
+                            </TouchableOpacity>
+
                         </View>
                     </View>
                 </View>
                 <View style={tabContainer}>
-                    <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc  } onPress={() => this.changeTab(0)}>
+                    <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
                         <Text style={{ color: 'white' }}>Creations</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc  } onPress={() => this.changeTab(1)}>
-                    <Text style={{ color: 'white' }}>Progress</Text>
+                    <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(1)}>
+                        <Text style={{ color: 'white' }}>Progress</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc  } onPress={() => this.changeTab(2)}>
+                    <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(2)}>
                         <Text style={{ color: 'white' }}>Friends</Text>
                     </TouchableOpacity>
                 </View>
-    
-                    {this.renderTab()}
-                
+
+                {this.renderTab()}
+
             </View>
         );
     }
