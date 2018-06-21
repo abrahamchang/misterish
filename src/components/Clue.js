@@ -51,15 +51,14 @@ export default class Clue extends Component {
 			return (
 				<View style={{ padding: '2%' }}>
 					<View style={this.props.checked ? styles.containerCheck : styles.containerNotCheck }>
-						<TouchableOpacity>
-							<Icon
+						<TouchableOpacity style={{flex: 4, flexDirection: 'row' }}>
+							<Icon style={{flex: 1}}
 								name={this.props.checked ? 'done' : 'play-arrow'}
 								color={this.props.checked ? '#553285' : '#00D972'}
 								size={40}
 								onPress={this.props.playClueAudio}
 							/>
-						</TouchableOpacity>
-						<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+							<View style={{ justifyContent: 'center', alignItems: 'center', flex: 3 }}>
 							<Progress.Bar
 								progress={1}/*devolver el progreso interpolado entre 0 y 1 donde 1 es la duracion del audio}*/
 								color={'#553285'}
@@ -68,6 +67,8 @@ export default class Clue extends Component {
 								borderColor={'#553285'}
 							/>
 						</View>
+						</TouchableOpacity>
+
 					</View>
 				</View>
 			);

@@ -14,6 +14,7 @@ const MAXIMUM_TIME_DIFFERENCE = 5;
 const LOCATION_TIME_INTERVAL = 5000;
 
 class CameraScanner extends Component {
+
     state = {
         doIHaveCameraPermission: null,
         doIHaveLocationPermission: null,
@@ -87,6 +88,7 @@ class CameraScanner extends Component {
     }
 
     render() {
+        Audio.setIsEnabledAsync(true);
         const { doIHaveCameraPermission, doIHaveLocationPermission } = this.state;
         if (this.state.cargando) {
             this.findClues();
@@ -113,16 +115,17 @@ class CameraScanner extends Component {
                 if (this.state.GIF) {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} childOn={true} exitToApp={this.getMeOut.bind(this)}>
                                 <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
                             </Notepad>
                         </BarCodeScanner>
 
                     );
                 } else if (this.state.victoria) {
+                    Audio.setIsEnabledAsync(false);
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex}  childOn={true} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
                                     title={'Congratulations, you did it!'}
                                     text={'You completed the mistery!\nPress the below button to continue.'}
@@ -134,7 +137,7 @@ class CameraScanner extends Component {
                 } else if (this.state.modalVisible) {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} childOn={true} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
                                     title={'Exit'}
                                     text={'Are you sure you want to leave?\nYou will lose your progress'}
@@ -236,10 +239,12 @@ class CameraScanner extends Component {
     }
 
     onPressOk() {
+        Audio.setIsEnabledAsync(false);
         this.goHome();
     }
 
     async solvedClue() {
+        Audio.setIsEnabledAsync(true);
         const SoundObject = new Audio.Sound();
         // Indicador de que se resolvió, sonido o algo
         let index = this.state.clueIndex;
@@ -247,6 +252,7 @@ class CameraScanner extends Component {
         if (index === this.state.clues.length) {
             // Se terminó, llamar modal y de modal a Loading
             try {
+
                 await SoundObject.loadAsync(require('../assets/mistery-complete.mp3'));
                 await SoundObject.playAsync();
             }
@@ -265,6 +271,7 @@ class CameraScanner extends Component {
             this.setState({ clueIndex: index, GIF: true });
             this.scheduleLocation();
             setTimeout(() => this.setState({ GIF: false }), 6200);
+            setTimeout(() => Audio.setIsEnabledAsync(false), 6200);
         }
     }
 }
