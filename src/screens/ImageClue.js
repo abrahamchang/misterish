@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Picker, TextInput, Text, View } from 'react-native';
+import { ImagePicker } from 'expo';
+import firebase from 'firebase';
 import Button from '../components/common/Button';
 
-class TextClue extends Component {
+class ImageClue extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		headerTintColor: 'rgba(54,23,94,0.4)',
 		headerTitle: (
@@ -26,7 +28,7 @@ class TextClue extends Component {
 	})
 
 	state = {
-		clue: '',
+		clue: null,
 		title: '',
 		main: true,
 		sol: '',
@@ -34,13 +36,18 @@ class TextClue extends Component {
 	};
 
 	onPressNext() {
-		if (this.state.text !== '' && this.state.title !== '' && this.state.title !== '') {
+		if (this.state.clue !== null && this.state.title !== '' && this.state.title !== '') {
 			this.setState({ main: false });
 		}
 	}
 
 	onPressFinish() {
-
+		const cadena = this.props.navigation.state.params.image;
+		console.log('here mothafucka');
+		console.log(cadena);
+		firebase.storage().ref('/test.jpg').putString(cadena).then((algo) => {
+			console.log(algo);
+		});
 	}
 
 	onPressConfirm() {
@@ -51,7 +58,7 @@ class TextClue extends Component {
 			id: this.props.navigation.state.params.clueIndex,
 			sol: this.state.sol,
 			title: this.state.title,
-			type: 'text'
+			type: 'img'
 		});
 		let data = {
 			clueNumber: this.props.navigation.state.params.clueNumber,
@@ -76,6 +83,50 @@ class TextClue extends Component {
 
         }
 	}
+
+    async loadImage() {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            aspect: [4, 3],
+            base64: true
+        });
+        if (!result.cancelled) {
+            this.setState({ clue: result.base64 });
+        }
+    }
+
+    imageOrSelected() {
+        if (this.state.clue === null) {
+            return (
+                <View style={styles.imageLoaderContainer}>
+                    <Text style={styles.imageText}>
+                        Image
+                    </Text>
+                    <Button onPress={this.loadImage.bind(this)}>
+                        Select
+                    </Button>
+                </View>
+            );
+        } else {
+            return (
+                <View
+                    style={{
+                        height: '15%',
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Text style={{
+                        color: 'green',
+                        fontSize: 14
+                    }}
+                    >
+                        Image Successfully Loaded
+                    </Text>
+                </View>
+            );
+        }
+    }
 
 	renderButton() {
 		const index = this.props.navigation.state.params.clueIndex;
@@ -116,18 +167,7 @@ class TextClue extends Component {
 	                        selectionColor={'rgba(54, 23, 94, 0.7)'}
 	                    />
 					</View>
-					<View style={styles.textInputContainer}>
-	                    <TextInput
-	                        placeholder={'Write your clue'}
-	                        onChangeText={(text) => {
-	                            this.setState({ clue: text });
-	                        }}
-	                        value={this.state.clue}
-	                        style={styles.clueField}
-	                        underlineColorAndroid={'#36175E'}
-	                        selectionColor={'rgba(54, 23, 94, 0.7)'}
-	                    />
-					</View>
+					{this.imageOrSelected()}
 					<View style={styles.textInputContainer}>
 	                    <TextInput
 	                        placeholder={'Write the solution'}
@@ -179,6 +219,19 @@ class TextClue extends Component {
 }
 
 const styles = {
+    imageLoaderContainer: {
+        width: '60%',
+        height: '15%',
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        marginTop: '10%'
+    },
+    imageText: {
+        paddingRight: '30%',
+        fontSize: 14,
+        color: '#36175E'
+    },
 	mainContainer: {
 		height: '100%',
 		width: '100%',
@@ -248,4 +301,4 @@ const secStyles = {
     }
 };
 
-export default TextClue;
+export default ImageClue;

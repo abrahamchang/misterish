@@ -8,8 +8,8 @@ import Button from '../components/common/Button';
 class MysteryCreator extends Component {
     state = {
         name: '',
-        clueNumber: -1,
-        difficulty: '',
+        clueNumber: 1,
+        difficulty: 'Easy',
         image: null,
         error: false,
         errorMsg: '',
@@ -66,12 +66,12 @@ class MysteryCreator extends Component {
 
     async loadImage() {
         let result = await ImagePicker.launchImageLibraryAsync({
-            aspect: [4, 3]
+            aspect: [4, 3],
+            base64: true
         });
-
         if (!result.cancelled) {
-            console.log(result.uri);
-            this.setState({ image: result.uri });
+            let imageData = result.base64;
+            this.setState({ image: imageData });
         }
     }
 
@@ -92,19 +92,30 @@ class MysteryCreator extends Component {
             this.setState({ error: true, errorMsg: 'No difficulty selected' });
         } else if (this.state.clueNumber === -1) {
             this.setState({ error: true, errorMsg: 'Please, select a number of clues' })
+        } else if (this.state.image === null) {
+            this.setState({ error: true, errorMsg: 'Please, select an image' });
         } else {
             this.setState({ main: false });
         }
     }
 
     onPressConfirm() {
+        let data = {
+            clueNumber: this.state.clueNumber,
+            clueIndex: 0,
+            name: this.state.name,
+            image: this.state.image,
+            difficulty: this.state.difficulty,
+            clues: []
+        };
         switch (this.state.nextClueType) {
             case 'text':
-                this.props.navigation.navigate('TextClue');
+                this.props.navigation.navigate({ routeName: 'TextClue', params: data });
                 break;
             case 'audio':
                 break;
             case 'img':
+                this.props.navigation.navigate({ routeName: 'ImageClue', params: data });
                 break;
             case 'location':
                 break;
@@ -295,7 +306,7 @@ const secStyles = {
         marginTop: '15%'     
     },
     text: {
-        fontSize: 12,
+        fontSize: 18,
         color: '#36175E'
     },
     pickerContainer: {

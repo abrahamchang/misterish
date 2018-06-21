@@ -13,6 +13,7 @@ import Recovery from './src/screens/Recovery';
 import Register from './src/screens/Register';
 import Profile from './src/screens/Profile'; 
 import TextClue from './src/screens/TextClue';
+import ImageClue from './src/screens/ImageClue';
 
 class Router extends Component {
     render() {
@@ -84,10 +85,10 @@ const Navigator = createStackNavigator(
                             }
                         },
                         TextClue: {
-                            screen: TextClue,
-                            navigationOptions: {
-                                header: null
-                            }
+                            screen: TextClue
+                        },
+                        ImageClue: {
+                            screen: ImageClue
                         }
                     }),
                     navigationOptions: {
