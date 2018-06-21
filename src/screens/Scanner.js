@@ -68,7 +68,7 @@ class CameraScanner extends Component {
                 if (this.state.GIF) {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} childOn={true} exitToApp={this.getMeOut.bind(this)}>
                                 <Image style={styles.GIF} source={require('../assets/celebration.gif')} />
                             </Notepad>
                         </BarCodeScanner>
@@ -111,7 +111,7 @@ class CameraScanner extends Component {
                 } else {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
-                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}/>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} childOn={this.state.childOn} exitToApp={this.getMeOut.bind(this)}/>
                         </BarCodeScanner>
                     );
                 }
@@ -168,7 +168,7 @@ class CameraScanner extends Component {
             //error
         }
             this.setState({ clueIndex: index, GIF: true });
-            setTimeout(() => this.setState({ GIF: false }), 6200);
+            setTimeout(() => this.setState({ GIF: false, childOn: true }), 6200);
         }
     }
 }

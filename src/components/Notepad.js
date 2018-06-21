@@ -64,8 +64,14 @@ export default class Notepad extends Component {
 	renderMidViewItem(){
 		var rend = this.state.midViewOn;
 		var item = this.state.midViewItem;
-	
-		if(rend){
+		console.log("has child>> "  + this.props.childOn);
+		var childOn;
+		if(this.props.childOn){
+		childOn = this.props.childOn;
+		}else{
+		childOn = false;
+		}
+		if(rend && !childOn){
 			if(item.type === 'img'){
 				return (
 					<View >
