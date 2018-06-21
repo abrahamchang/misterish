@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { View, Image, Text, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TouchableOpacity, FlatList } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase'
+
+import MisteryDetail from '../components/MisteryDetail';
+import FriendDetail from '../components/FriendDetail';
 
 class Profile extends Component {
 
@@ -9,8 +12,73 @@ class Profile extends Component {
         tabIndex: 1,
         username: 'Guest',
         lvl: '0',
-        description: 'Register for a more complete gaming experience.'
+        description: 'Register for a more complete gaming experience.',
+        creations: [],
+        creationsLoaded: false,
+        progress: [],
+        progressLoaded: false,
+        friends: [],
+        friendsLoaded: false
     };
+
+    onPress(id) {
+        this.props.navigation.navigate({ routeName: 'Scanner', params: id });
+    }
+
+    async prepareCreations() {
+        const creations = this.props.navigation.state.params.user.mstrList.id;
+        const size = creations.length;
+        const data = [];
+
+        for (let i = 0; i < size; i++) {
+            await firebase.database().ref(`/misteryMetadata/${creations[i]}`)
+                .once('value')
+                .then((snapshot) => {
+                    data.push(snapshot.val());
+                })
+                .catch(() => {
+                    console.log('Ocurrio un error muy grave');
+                });
+        }
+        this.setState({ creations: data, creationsLoaded: true })
+    }
+
+    async prepareProgress() {
+        const progress = this.props.navigation.state.params.user.playingList.completedMysteries;
+        const size = progress.length;
+        const data = [];
+
+        for (let i = 0; i < size; i++) {
+            await firebase.database().ref(`/misteryMetadata/${progress[i]}`)
+                .once('value')
+                .then((snapshot) => {
+                    data.push(snapshot.val());
+                })
+                .catch(() => {
+                    console.log('Ocurrio un error muy grave');
+                });
+        }
+        this.setState({ progress: data, progressLoaded: true })
+    }
+
+    async prepareFriends() {
+        const friends = Object.keys(this.props.navigation.state.params.user.fndList.userID);
+        const size = friends.length;
+        const data = [];
+
+        for (let i = 0; i < size; i++) {
+            await firebase.database().ref(`/users/${friends[i]}`)
+                .once('value')
+                .then((snapshot) => {
+                    data.push(snapshot.val());
+                })
+                .catch(() => {
+                    console.log('Ocurrio un error muy grave');
+                });
+        }
+        this.setState({ friends: data, friendsLoaded: true })
+
+    }
 
     componentWillMount() {
         if (this.props.navigation.state.params.user) {
@@ -19,35 +87,98 @@ class Profile extends Component {
                 lvl: this.props.navigation.state.params.user.lvl,
                 description: this.props.navigation.state.params.user.description
             });
+            this.prepareCreations();
+            this.prepareProgress();
+            this.prepareFriends();
         }
     }
 
-
-
-
     renderTab() {
-
         const { tabSectionContainer } = styles;
+
         if (this.state.tabIndex === 0) {
-            return (
-                <View style={tabSectionContainer}>
-                    <Text>A</Text>
-                </View>
-            );
+            if (this.state.creationsLoaded) {
+                return (
+                    <View style={tabSectionContainer}>
+                        <FlatList
+                            numColumns={2}
+                            data={this.state.creations}
+                            keyExtractor={(item) => item.id}
+                            renderItem={(item) => <MisteryDetail
+                                id={item.id}
+                                imageURL={item.item.imageURL}
+                                name={item.item.name}
+                                description={item.item.description}
+                                difficulty={item.item.dificulty}
+                                userID={item.item.userID}
+                                reviews={item.item.reviews}
+                                onPress={() => this.onPress(item.item.id)}
+                            />}
+                        />
+                    </View>
+                );
+            }
+            else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <Text>A</Text>
+                    </View>
+                );
+            }
         }
         else if (this.state.tabIndex === 1) {
-            return (
-                <View style={tabSectionContainer}>
-                    <Text>B</Text>
-                </View>
-            );
+            if (this.state.progressLoaded) {
+                return (
+                    <View style={tabSectionContainer}>
+                        <FlatList
+                            numColumns={2}
+                            data={this.state.progress}
+                            keyExtractor={(item) => item.id}
+                            renderItem={(item) => <MisteryDetail
+                                id={item.id}
+                                imageURL={item.item.imageURL}
+                                name={item.item.name}
+                                description={item.item.description}
+                                difficulty={item.item.dificulty}
+                                userID={item.item.userID}
+                                reviews={item.item.reviews}
+                                onPress={() => this.onPress(item.item.id)}
+                            />}
+                        />
+                    </View>
+                );
+            }
+            else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <Text>B</Text>
+                    </View>
+                );
+            }
         }
         else {
-            return (
-                <View style={tabSectionContainer}>
-                    <Text>C</Text>
-                </View>
-            );
+            if (this.state.friendsLoaded) {
+                return (
+                    <View style={tabSectionContainer}>
+                        <FlatList
+                            numColumns={2}
+                            style={{ flex: 1 }}
+                            data={this.state.friends}
+                            keyExtractor={(item) => item.userID}
+                            renderItem={(item) => (
+                                <FriendDetail username={item.item.username} description={item.item.description} lvl={item.item.lvl} />
+                            )}
+                        />
+                    </View>
+                );
+            }
+            else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <Text>B</Text>
+                    </View>
+                );
+            }
         }
     }
 
@@ -104,7 +235,6 @@ class Profile extends Component {
                             }}>
                             {this.state.username} | Lvl. {this.state.lvl}
                         </Text>
-
                         <View style={detailsContainer}>
                             <View style={{ marginHorizontal: '10%' }}>
                                 <Text style={{
@@ -148,8 +278,6 @@ class Profile extends Component {
                                     <Text style={{ color: '#553285' }}>Logout</Text>
                                 </TouchableOpacity>
                             </View>
-
-
                         </View>
                     </View>
                 </View>
@@ -166,9 +294,7 @@ class Profile extends Component {
                         <Text style={{ color: 'white' }}>Friends</Text>
                     </TouchableOpacity>
                 </View>
-
                 {this.renderTab()}
-
             </View>
         );
     }
@@ -225,11 +351,13 @@ const styles = {
         flexDirection: 'row',
     },
     tabSectionContainer: {
-        backgroundColor: 'yellow',
+        backgroundColor: '#553285',
         height: '42%',
         width: '100%',
         marginBottom: 1,
-        marginTop: 1
+        marginTop: 1,
+        borderRadius: 5,
+        flex: 1
     }
 };
 
