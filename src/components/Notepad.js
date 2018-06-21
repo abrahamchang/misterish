@@ -74,7 +74,7 @@ export default class Notepad extends Component {
 		if(rend && !childOn){
 			if(item.type === 'img'){
 				return (
-					<View >
+					<View>
 						<Image style={{width: '100%', height: '100%', resizeMode: 'contain'}} source={{ uri: item.clue }}/>
 					</View>
 				);
@@ -103,7 +103,6 @@ export default class Notepad extends Component {
             //error
         }
 	}
-
 
 	renderClue(item){
 		if(item.id < this.props.index){
@@ -172,8 +171,6 @@ export default class Notepad extends Component {
 		);
 	}
 
-
-
 	onSwipeUp(){
 		Animated.spring(this.state.position, {
 			toValue: {x: 0, y: SCREEN_HEIGHT*0.075}
@@ -196,6 +193,8 @@ const styles = {
 		marginTop: SCREEN_HEIGHT*0.1,
 		margin: SCREEN_WIDTH*0.05,
 		borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
 	},
 	buttonContainerStyle: {
 		borderRadius: 5,

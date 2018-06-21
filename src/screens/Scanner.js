@@ -46,8 +46,8 @@ class CameraScanner extends Component {
             this.findClues();
             return (
                 <View style={styles.loadingView}>
-                    <ActivityIndicator size='large' color="#36175E"/>
-                    <Text style={styles.loadingText}>Loading...</Text>
+                    <ActivityIndicator size='large' color="#36175E" />
+                    <Text style={styles.loadingText}>Loading clues</Text>
                 </View>
             );
         } else {
@@ -61,7 +61,7 @@ class CameraScanner extends Component {
                 // Handling error
                 return (
                     <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>You Did Not Gave Us Permission to User Your Camera</Text>
+                        <Text style={styles.errorText}>You did not gave us permission to user your camera</Text>
                     </View>
                 );
             } else {
@@ -76,42 +76,37 @@ class CameraScanner extends Component {
                     );
                 } else if (this.state.victoria) {
                     return (
-                        <Modal
-                            isVisible={true}
-                            backdropColor={'rgba(54,23,94,0.8)'}
-                            backdropOpacity={0.5}
-                        >
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
-                                    title={'You did it!'}
-                                    text={'You completed the mistery!\nPress any button to continue'}
+                                    title={'Congratulations, you did it!'}
+                                    text={'You completed the mistery!\nPress the below button to continue.'}
                                     onPressOk={this.goHome.bind(this)}
-                                    onPressCancel={this.goHome.bind(this)}
                                 />
-                            </View>
-                        </Modal>
+                            </Notepad>
+                        </BarCodeScanner>
                     );
                 } else if (this.state.modalVisible) {
                     return (
-                        <Modal
-                            isVisible={this.state.modalVisible}
-                            backdropColor={'rgba(54,23,94,0.8)'}
-                            backdropOpacity={0.5}
-                        >
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
                                     title={'Exit'}
                                     text={'Are you sure you want to leave?\nYou will lose your progress'}
                                     onPressCancel={this.onPressCancel.bind(this)}
                                     onPressOk={this.onPressOk.bind(this)}
                                 />
-                            </View>
-                        </Modal>
+                            </Notepad>
+                        </BarCodeScanner>
                     );
                 } else {
                     return (
                         <BarCodeScanner style={{ height: '100%', width: '100%' }} onBarCodeRead={this._handleBarCodeRead}>
+<<<<<<< HEAD
                             <Notepad clues={this.state.clues} index={this.state.clueIndex} childOn={this.state.childOn} exitToApp={this.getMeOut.bind(this)}/>
+=======
+                            <Notepad clues={this.state.clues} index={this.state.clueIndex} exitToApp={this.getMeOut.bind(this)} />
+>>>>>>> 9b3e89967cb5f4cb3cbbdf7321ef09d94e049411
                         </BarCodeScanner>
                     );
                 }
@@ -151,22 +146,22 @@ class CameraScanner extends Component {
         index++;
         if (index === this.state.clues.length) {
             // Se terminó, llamar modal y de modal a Loading
-        try {
-             await SoundObject.loadAsync(require('../assets/mistery-complete.mp3'));
-             await SoundObject.playAsync();
-        }
-        catch(err){
-            //error
-        }
+            try {
+                await SoundObject.loadAsync(require('../assets/mistery-complete.mp3'));
+                await SoundObject.playAsync();
+            }
+            catch (err) {
+                //error
+            }
             this.setState({ victoria: true });
         } else {
-        try {
-             await SoundObject.loadAsync(require('../assets/clue-solved.wav'));
-             await SoundObject.playAsync();
-        }
-        catch(err){
-            //error
-        }
+            try {
+                await SoundObject.loadAsync(require('../assets/clue-solved.wav'));
+                await SoundObject.playAsync();
+            }
+            catch (err) {
+                //error
+            }
             this.setState({ clueIndex: index, GIF: true });
             setTimeout(() => this.setState({ GIF: false, childOn: true }), 6200);
         }
@@ -184,7 +179,7 @@ const styles = {
     loadingText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#f4f4f4'
+        color: 'white'
     },
     errorContainer: {
         justifyContent: 'center',
