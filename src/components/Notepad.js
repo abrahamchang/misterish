@@ -64,8 +64,20 @@ export default class Notepad extends Component {
 	renderMidViewItem(){
 		var rend = this.state.midViewOn;
 		var item = this.state.midViewItem;
-	
-		if(rend){
+		var childOn;
+		console.log(this.props.childOn);
+		if(this.props.childOn){
+			childOn = this.props.childOn;
+		}else {
+			childOn = false;
+		}
+		if(item){
+			childOn = this.props.index === item.id ? false : true;
+		}
+		else{
+			childOn = false;
+		}
+		if(rend && !(childOn) ){
 			if(item.type === 'img'){
 				return (
 					<View style={{width: '100%', height: '100%'}}>
@@ -91,14 +103,17 @@ export default class Notepad extends Component {
 				);
 			}
 		}
+	
 
 	}
 
     async playAudio(item) {
+    	Audio.setIsEnabledAsync(true);
 		const SoundObject = new Audio.Sound();
 		try {
         	await SoundObject.loadAsync({uri: item.clue});
          	await SoundObject.playAsync();
+         	
         }
         catch(err){
             //error
@@ -106,6 +121,7 @@ export default class Notepad extends Component {
 	}
 
 	renderClue(item){
+		Audio.setIsEnabledAsync(true);
 		if(item.id < this.props.index){
 			return ( 
 			<Clue
@@ -199,9 +215,7 @@ const styles = {
 	},
 	buttonContainerStyle: {
 		borderRadius: 5,
-		paddingTop: 20,
 		margin:NOTEPAD_WIDTH*0.025,
-		position: 'absolute',
 		bottom: 0,
 		width: NOTEPAD_WIDTH*0.90,
 	},
