@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\assets\\avatar",
     "\\src\\components",
-    "\\src\\components\\common",
+    "\\src\\components\\profile",
     "\\src\\screens"
   ],
   "SelectedNode": "\\src\\screens\\Profile.js",

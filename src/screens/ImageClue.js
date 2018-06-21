@@ -41,12 +41,23 @@ class ImageClue extends Component {
 		}
 	}
 
+	generateRandomString() {
+		let cadena = '';
+		const abc = 'abcdefghijklmnopqrstuvwxyz';
+		for (let i = 0; i < 16; i++) {
+			const index = Math.random() * 26;
+			cadena += abc.substring(index, index + 1);
+		}
+		return cadena;
+	}
+
 	onPressFinish() {
+		const nombre = this.generateRandomString();
 		const cadena = this.props.navigation.state.params.image;
-		console.log('here mothafucka');
-		console.log(cadena);
-		firebase.storage().ref('/test.jpg').putString(cadena).then((algo) => {
+		firebase.storage().ref('/' + nombre + '.jpg').putString(cadena).then((algo) => {
 			console.log(algo);
+		}).catch((err) => {
+			console.log(err);
 		});
 	}
 

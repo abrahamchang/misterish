@@ -3,8 +3,10 @@ import { View, Text, Image } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import Loading from './src/screens/Loading';
+
 import Developing from './src/screens/Developing';
 import MysteryCreator from './src/screens/MysteryCreator';
+
 import { Home } from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
 import Header from './src/components/Header';

@@ -39,7 +39,7 @@ class Home extends Component {
        return (
             <View style={{ flex: 1, backgroundColor: '#553285' }}>
                 <FlatList
-                    numColumns={2}
+                    numColumns={3}
                     data={this.prepareData()}
                     keyExtractor={(item) => item.id}
                     renderItem={(item) => <MisteryDetail

@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import Card from './Card';
-import CardSection from './CardSection';
-import Button from './Button';
+import Card from '../common/Card';
+import CardSection from '../common/CardSection';
+import Button from '../common/Button';
 
-const MisteryDetail = ({ mistery }) => {
+const MisteryDetailProfile = ({ mistery }) => {
 
     const { image, misteryName, userID } = mistery;
     const {
@@ -27,7 +27,7 @@ const MisteryDetail = ({ mistery }) => {
             </View>
             {/* 2 Column */}
             <View style={styles.headerContentStyle}>
-                <Text style={styles.mlHeaderTextStyle}>{misteryNAme}</Text>
+                <Text style={styles.mlHeaderTextStyle}>{misteryName}</Text>
                 <Text style={styles.flLevelTextStyle}>Difficulty:</Text>
             </View>
         </CardSection>
@@ -66,4 +66,4 @@ const styles = {
 
 };
 
-export default MisteryDetail;
+export default MisteryDetailProfile;

@@ -37,6 +37,8 @@ class Register extends Component {
                         .ref(`users/${uid}`)
                         .set({
                             userID: uid,
+                            username: 'Abraham98',
+                            description: 'Espera lo mejor, preparate para lo peor y acepta lo que venga',
                             email: email,
                             lvl: '0',
                             fndList: {
@@ -65,10 +67,15 @@ class Register extends Component {
                                         clueIndex: 0
                                     }
                                 ]
+                            },
+                            playingList: {
+                                completedMysteries: '',
+                                unfinishedMysteries: ''
                             }
                         }).then(() => {
                             this.props.navigation.goBack(null);                            
                         });
+                    this.props.navigation.goBack(null);
                 })
                 .catch(() => {
                     this.setState({ errorText: 'Invalid email address', emailError: true, cargando: false });
