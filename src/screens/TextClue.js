@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Picker, TextInput, Text, View } from 'react-native';
+import { ActivityIndicator, Picker, TextInput, Text, View } from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
+import firebase from 'firebase';
 import Button from '../components/common/Button';
 
 class TextClue extends Component {
@@ -30,7 +32,8 @@ class TextClue extends Component {
 		title: '',
 		main: true,
 		sol: '',
-		nextClueType: 'text'
+		nextClueType: 'text',
+		cargando: false
 	};
 
 	onPressNext() {
@@ -40,7 +43,52 @@ class TextClue extends Component {
 	}
 
 	onPressFinish() {
-
+		if (this.state.clue !== '' && this.state.title !== '' && this.state.sol !== '') {
+			this.setState({ cargando: true });
+			const datos = this.props.navigation.state.params;
+			let pistas = datos.clues;
+			pistas.push({
+				clue: this.state.clue,
+				id: this.props.navigation.state.params.clueIndex,
+				sol: this.state.sol,
+				title: this.state.title,
+				type: 'text'
+			});
+			firebase.database().ref('/users/ZAmXmdpQl9X9ACPxe3JeB0AVPOi1').once('value')
+			.then((userSnapshot) => {
+				firebase.database().ref('/misteryMetadata').once('value')
+				.then((metadatos) => {
+					const user = userSnapshot.val();
+					const id = user.mstrList.id;
+					const misterios = metadatos.val();
+					const index = misterios.length;
+					id[index] = index;
+					firebase.database().ref(`/misteryMetadata/${index}`).set({
+						description: 'UNIMET',
+						dificulty: datos.difficulty,
+						id: index,
+						imageURL: 'https://firebasestorage.googleapis.com/v0/b/misterish-2078a.appspot.com/o/unimet-saman-excelencia.jpg?alt=media&token=b63e1db4-8ee7-47c7-900a-fc0b27bca06e',
+						name: datos.name,
+						reviews: 0,
+						userID: 'Misterish'
+					}).then(() => {
+						firebase.database().ref(`/misteryClues/${index}`).set(
+							pistas
+						).then(() => {
+							firebase.database().ref('/users/ZAmXmdpQl9X9ACPxe3JeB0AVPOi1/mstrList/').set({
+								id
+							}).then(() => {
+								const resetAction = StackActions.reset({
+								   index: 0,
+								   actions: [NavigationActions.navigate({ routeName: 'Main', params: datos })]
+								});
+								this.props.navigation.dispatch(resetAction);
+							});
+						});
+					}).catch((err) => console.log(err));
+				}).catch((err) => console.log(err));
+			}).catch((err) => console.log(err));
+		}
 	}
 
 	onPressConfirm() {
@@ -66,11 +114,13 @@ class TextClue extends Component {
                 this.props.navigation.navigate({ key: index, routeName: 'TextClue', params: data });
                 break;
             case 'audio':
+                this.props.navigation.navigate('Developing');
                 break;
             case 'img':
-            	this.props.navigation.navigate({ key: index, routeName: 'ImageClue', params: data });
+                this.props.navigation.navigate('Developing');
                 break;
             case 'location':
+                this.props.navigation.navigate('Developing');
                 break;
             default:
 
@@ -80,17 +130,23 @@ class TextClue extends Component {
 	renderButton() {
 		const index = this.props.navigation.state.params.clueIndex;
 		const total = this.props.navigation.state.params.clueNumber;
-		if (index !== total - 1) {
-			return (
-				<Button onPress={this.onPressNext.bind(this)}>
-					Next Clue
-				</Button>
-			);
+		if (!this.state.cargando) {
+			if (index !== total - 1) {
+				return (
+					<Button onPress={this.onPressNext.bind(this)}>
+						Next Clue
+					</Button>
+				);
+			} else {
+				return (
+					<Button onPress={this.onPressFinish.bind(this)}>
+						Finish and Create
+					</Button>
+				);
+			}
 		} else {
 			return (
-				<Button onPress={this.onPressFinish.bind(this)}>
-					Finish and Create
-				</Button>
+				<ActivityIndicator size="large" color='#36175E'/>
 			);
 		}
 	}

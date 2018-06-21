@@ -2,6 +2,28 @@ import React, { Component } from 'react';
 import { View, Text, Image, Button } from 'react-native';
 
 class Developing extends Component {
+    static navigationOptions = ({ navigation }) => ({
+        headerTintColor: 'rgba(54,23,94,0.4)',
+        headerTitle: (
+            <View style={{ 
+                alignSelf: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: '100%',
+                justifyContent: 'center'
+            }}>
+                <Text style={{
+                    fontSize: 18,
+                    color: 'rgb(54,23,94)',
+                    alignSelf: 'center'
+                }}>
+                    In Development
+                </Text>
+            </View>
+        ),
+        headerRight: <View />
+    })
+    
 render() {
     const { ventanaStyle, rellenoStyle, contenedorTexto, logoStyle, textoStyle, contenedorImagen } = styles;
 

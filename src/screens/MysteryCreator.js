@@ -67,10 +67,9 @@ class MysteryCreator extends Component {
     async loadImage() {
         let result = await ImagePicker.launchImageLibraryAsync({
             aspect: [4, 3],
-            base64: true
         });
         if (!result.cancelled) {
-            let imageData = result.base64;
+            let imageData = result.uri;
             this.setState({ image: imageData });
         }
     }
@@ -111,16 +110,27 @@ class MysteryCreator extends Component {
         switch (this.state.nextClueType) {
             case 'text':
                 this.props.navigation.navigate({ routeName: 'TextClue', params: data });
+                this.setState({
+                    name: '',
+                    clueNumber: 1,
+                    difficulty: 'Easy',
+                    image: null,
+                    error: false,
+                    errorMsg: '',
+                    main: true,
+                    nextClueType: 'text'
+                });
                 break;
             case 'audio':
+                this.props.navigation.navigate('Developing');
                 break;
             case 'img':
-                this.props.navigation.navigate({ routeName: 'ImageClue', params: data });
+                this.props.navigation.navigate('Developing');
                 break;
             case 'location':
+                this.props.navigation.navigate('Developing');
                 break;
             default:
-
         }
     }
 

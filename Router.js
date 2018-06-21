@@ -91,6 +91,9 @@ const Navigator = createStackNavigator(
                         },
                         ImageClue: {
                             screen: ImageClue
+                        },
+                        Developing: {
+                            screen: Developing
                         }
                     }),
                     navigationOptions: {
