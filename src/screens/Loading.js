@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
-import firebase from 'firebase'
-import config from '../../Keys'
-
+import firebase from 'firebase';
+import { connect } from 'react-redux';
+import config from '../../Keys';
+import { sendData } from '../actions';
 
 class Loading extends Component {
   
@@ -25,8 +26,9 @@ class Loading extends Component {
                         };
                         const resetAction = StackActions.reset({
                            index: 0,
-                           actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                           actions: [NavigationActions.navigate({ routeName: 'Root'})]
                         });
+                        this.props.sendData(datos);
                         this.props.navigation.dispatch(resetAction);
                     }).catch((err) => {
                         console.log(err);
@@ -38,8 +40,9 @@ class Loading extends Component {
                     };
                     const resetAction = StackActions.reset({
                        index: 0,
-                       actions: [NavigationActions.navigate({ routeName: 'Login', params: datos })]
+                       actions: [NavigationActions.navigate({ routeName: 'Login' })]
                     });
+                    this.props.sendData(datos);
                     this.props.navigation.dispatch(resetAction);
                 }
             });
@@ -107,4 +110,4 @@ const styles = {
     }
 };
 
-export default Loading;
+export default connect(null, { sendData })(Loading);

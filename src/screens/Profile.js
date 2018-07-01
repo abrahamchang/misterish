@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, TouchableOpacity, FlatList } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase'
-
+import { connect } from 'react-redux';
 import MisteryDetail from '../components/MisteryDetail';
 import FriendDetail from '../components/FriendDetail';
 
@@ -26,7 +26,7 @@ class Profile extends Component {
     }
 
     async prepareCreations() {
-        const creations = this.props.navigation.state.params.user.mstrList.id;
+        const creations = this.props.user.mstrList.id;
         const size = creations.length;
         const data = [];
 
@@ -44,7 +44,7 @@ class Profile extends Component {
     }
 
     async prepareProgress() {
-        const progress = this.props.navigation.state.params.user.playingList.completedMysteries;
+        const progress = this.props.user.playingList.completedMysteries;
         const size = progress.length;
         const data = [];
 
@@ -55,14 +55,14 @@ class Profile extends Component {
                     data.push(snapshot.val());
                 })
                 .catch(() => {
-                    console.log('Ocurrio un error muy grave');
+                    console.log('Ocurrió un error muy grave');
                 });
         }
         this.setState({ progress: data, progressLoaded: true })
     }
 
     async prepareFriends() {
-        const friends = Object.keys(this.props.navigation.state.params.user.fndList.userID);
+        const friends = Object.keys(this.props.user.fndList.userID);
         const size = friends.length;
         const data = [];
 
@@ -81,11 +81,11 @@ class Profile extends Component {
     }
 
     componentWillMount() {
-        if (this.props.navigation.state.params.user) {
+        if (this.props.user) {
             this.setState({
-                username: this.props.navigation.state.params.user.username,
-                lvl: this.props.navigation.state.params.user.lvl,
-                description: this.props.navigation.state.params.user.description
+                username: this.props.user.username,
+                lvl: this.props.user.lvl,
+                description: this.props.user.description
             });
             this.prepareCreations();
             this.prepareProgress();
@@ -196,7 +196,7 @@ class Profile extends Component {
                 index: 0,
                 actions: [{
                     type: 'Navigation/INIT',
-                    routeName: 'Loading'
+                    routeName: 'Login'
                     //AQUI ME FALTA ALGO PERO NO ME ACUERDO
                 }]
             });
@@ -361,4 +361,16 @@ const styles = {
     }
 };
 
-export default Profile;
+const mapStateToProps = state => {
+    if (state.data.data.user) {
+        return {
+            user: state.data.data.user
+        };
+    } else {
+        return {
+            user: state.data.user
+        };
+    }
+};
+
+export default connect(mapStateToProps)(Profile);

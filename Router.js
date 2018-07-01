@@ -7,7 +7,7 @@ import Loading from './src/screens/Loading';
 import Developing from './src/screens/Developing';
 import MysteryCreator from './src/screens/MysteryCreator';
 
-import { Home } from './src/screens/Home';
+import Home from './src/screens/Home';
 import Scanner from './src/screens/Scanner';
 import Header from './src/components/Header';
 import Login from './src/screens/Login';
@@ -79,23 +79,7 @@ const Navigator = createStackNavigator(
                     }
                 },
                 MysteryCreator: {
-                    screen: createStackNavigator({
-                        Main: {
-                            screen: MysteryCreator,
-                            navigationOptions: {
-                                header: null
-                            }
-                        },
-                        TextClue: {
-                            screen: TextClue
-                        },
-                        ImageClue: {
-                            screen: ImageClue
-                        },
-                        Developing: {
-                            screen: Developing
-                        }
-                    }),
+                    screen: Developing,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image

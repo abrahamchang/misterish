@@ -1,24 +1,31 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
+import { reloadHome } from '../actions';
 
-const Header = ({ tituloHeader }) => {
-    const { ventanaStyle, textoStyle, contenedorBoton, botonesStyle } = styles;
-    return (
-        <View style={ventanaStyle}>
-            <TouchableOpacity style={contenedorBoton}>
-                <Image style={botonesStyle} source={require('../assets/refresh.png')}/>
-            </TouchableOpacity>
+class Header extends Component {
+    onPressReload() {
+        this.props.reloadHome(this.props.reloadState);
+    }
 
-            <View>
-                <Text style={textoStyle}>{tituloHeader}</Text>
+    render() {
+        return (
+            <View style={styles.ventanaStyle}>
+                <TouchableOpacity style={styles.contenedorBoton} onPress={this.onPressReload.bind(this)}>
+                    <Image style={styles.botonesStyle} source={require('../assets/refresh.png')}/>
+                </TouchableOpacity>
+
+                <View>
+                    <Text style={styles.textoStyle}>{this.props.tituloHeader}</Text>
+                </View>
+
+                <TouchableOpacity style={styles.contenedorBoton}>
+                    <Image style={styles.botonesStyle} source={require('../assets/search.png')} />
+                </TouchableOpacity>
             </View>
-
-            <TouchableOpacity style={contenedorBoton}>
-                <Image style={botonesStyle} source={require('../assets/search.png')} />
-            </TouchableOpacity>
-        </View>
-    );
-};
+        );
+    }
+}
 
 const styles = {
     botonesStyle: {
@@ -51,4 +58,16 @@ const styles = {
 
 };
 
-export default Header;
+const mapStateToProps = state => {
+    if ((state.reload && typeof state.reload !== 'object') || state.reload === null) {
+        return {
+            reloadState: state.reload ? state.reload : false
+        };
+    } else if (state.reload.reload === true || state.reload.reload === false) {
+        return {
+            reloadState: state.reload.reload
+        };
+    }
+};
+
+export default connect(mapStateToProps, { reloadHome })(Header);

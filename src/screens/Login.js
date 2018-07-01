@@ -9,8 +9,9 @@ import {
 } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
+import { connect } from 'react-redux';
+import { sendData } from '../actions';
 import Modal from 'react-native-modal';
-
 import Button from '../components/common/Button';
 
 class Login extends Component {
@@ -70,8 +71,9 @@ class Login extends Component {
                     };
                     const resetAction = StackActions.reset({
                        index: 0,
-                       actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                       actions: [NavigationActions.navigate({ routeName: 'Root' })]
                     });
+                    this.props.sendData(datos);
                     this.props.navigation.dispatch(resetAction);
                 }).catch((err) => {
                     console.log(err);
@@ -102,8 +104,9 @@ class Login extends Component {
             };
             const resetAction = StackActions.reset({
                 index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Root', params: datos })]
+                actions: [NavigationActions.navigate({ routeName: 'Root' })]
             });
+            this.props.sendData(datos);
             this.props.navigation.dispatch(resetAction);
         }
     }
@@ -261,4 +264,4 @@ const styles = {
     }
 };
 
-export default Login;
+export default connect(null, { sendData })(Login);
