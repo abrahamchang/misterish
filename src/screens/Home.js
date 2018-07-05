@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
@@ -10,26 +10,49 @@ import { reloadHomeData } from '../actions';
 class Home extends Component {
     state = {
         cargando: false,
+        tabIndex: 1,
+        newMysteries: [],
         completedMysteries: [],
-        progressMysteries: []
+        unfinishedMysteries: [],
+        mysteriesLoaded: false
     };
 
     onPress(id) {
-       this.props.navigation.navigate({ routeName: 'Scanner', params: id });
+        this.props.navigation.navigate({ routeName: 'Scanner', params: id });
     }
 
     prepareData() {
-        const params = this.props.data;
-        const keys = Object.keys(params);
-        const data = [];
-        keys.forEach((key) => {
-            data.push(params[key]);
+        const mysteries = this.props.data;
+        const allKeys = Object.keys(mysteries);
+
+        const unfinishedKeys = Object.keys(this.props.user.playingList.unfinishedMysteries);
+        const dataUnfinished = [];
+        unfinishedKeys.forEach((key) => {
+            dataUnfinished.push(mysteries[key]);
+            delete allKeys[key];
         });
-        return data;
+        this.setState({ unfinishedMysteries: dataUnfinished });
+
+        const completedKeys = Object.keys(this.props.user.playingList.completedMysteries);
+        const dataCompleted = [];
+        completedKeys.forEach((key) => {
+            dataCompleted.push(mysteries[key]);
+            delete allKeys[key];
+        });
+        this.setState({ completedMysteries: dataCompleted });
+
+        const dataNew = [];
+        allKeys.forEach((key) => {
+            if (key != undefined) {
+                dataNew.push(mysteries[key]);
+            }
+        });
+        this.setState({ newMysteries: dataNew, mysteriesLoaded: true });
     }
 
     componentDidMount() {
         const { status } = Permissions.askAsync(Permissions.CAMERA);
+        this.prepareData();
 
     }
 
@@ -53,36 +76,143 @@ class Home extends Component {
         }
     }
 
-    render() {
-        if (this.state.cargando) {
-            return (
-                <View style={{ flex: 1, backgroundColor: '#553285' }}>
-                    <ActivityIndicator size="large" color='#36175E'/>
-                </View>
-            );
+    changeTab(toTab) {
+        this.setState({ tabIndex: toTab });
+    }
+
+    amIActive(currentTab) {
+        return this.state.tabIndex === currentTab;
+    }
+
+    renderTab() {
+        const { tabSectionContainer } = styles;
+        if (this.state.mysteriesLoaded) {
+            if (this.state.tabIndex === 0) {
+                return (
+                    <View style={tabSectionContainer}>
+                        <FlatList
+                            numColumns={2}
+                            data={this.state.unfinishedMysteries}
+                            keyExtractor={(item) => item.id}
+                            renderItem={(item) => <MisteryDetail
+                                id={item.id}
+                                imageURL={item.item.imageURL}
+                                name={item.item.name}
+                                description={item.item.description}
+                                difficulty={item.item.dificulty}
+                                userID={item.item.userID}
+                                reviews={item.item.reviews}
+                                onPress={() => this.onPress(item.item.id)}
+                            />}
+                        />
+                    </View>
+                );
+            }
+            else if (this.state.tabIndex === 1) {
+                return (
+                    <View style={tabSectionContainer}>
+                        <FlatList
+                            numColumns={2}
+                            data={this.state.newMysteries}
+                            keyExtractor={(item) => item.id}
+                            renderItem={(item) => <MisteryDetail
+                                id={item.id}
+                                imageURL={item.item.imageURL}
+                                name={item.item.name}
+                                description={item.item.description}
+                                difficulty={item.item.dificulty}
+                                userID={item.item.userID}
+                                reviews={item.item.reviews}
+                                onPress={() => this.onPress(item.item.id)}
+                            />}
+                        />
+                    </View>
+                );
+            }
+            else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <FlatList
+                            numColumns={2}
+                            data={this.state.completedMysteries}
+                            keyExtractor={(item) => item.id}
+                            renderItem={(item) => <MisteryDetail
+                                id={item.id}
+                                imageURL={item.item.imageURL}
+                                name={item.item.name}
+                                description={item.item.description}
+                                difficulty={item.item.dificulty}
+                                userID={item.item.userID}
+                                reviews={item.item.reviews}
+                                onPress={() => this.onPress(item.item.id)}
+                            />}
+                        />
+                    </View>
+                );
+            }
         } else {
             return (
-                <View style={{ flex: 1, backgroundColor: '#553285' }}>
-                    <FlatList
-                        numColumns={3}
-                        data={this.prepareData()}
-                        keyExtractor={(item) => item.id}
-                        renderItem={(item) => <MisteryDetail
-                            id={item.id}
-                            imageURL={item.item.imageURL}
-                            name={item.item.name}
-                            description={item.item.description}
-                            difficulty={item.item.dificulty}
-                            userID={item.item.userID}
-                            reviews={item.item.reviews}
-                            onPress={() => this.onPress(item.item.id)}
-                        />}
-                    />
+                <View style={tabSectionContainer}>
+                    <ActivityIndicator size='large' color="#36175E" />
                 </View>
             );
         }
     }
+
+    render() {
+        const { tabContainer, buttonContainerIn, buttonContainerAc } = styles;
+        return (
+            <View style={{ flex: 1 }}>
+                <View style={tabContainer}>
+                    <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
+                        <Text style={{ color: 'white' }}>In Progress</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(1)}>
+                        <Text style={{ color: 'white' }}>New Mysteries</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(2)}>
+                        <Text style={{ color: 'white' }}>Completed</Text>
+                    </TouchableOpacity>
+                </View>
+                {this.renderTab()}
+            </View>
+
+        );
+    }
 }
+
+const styles = {
+    tabSectionContainer: {
+        backgroundColor: '#553285',
+        flex: 1
+    },
+    buttonContainerIn: {
+        backgroundColor: '#36175E',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        margin: 1
+    },
+    buttonContainerAc: {
+        backgroundColor: '#7B52AB',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        margin: 1
+    },
+    tabContainer: {
+        height: 50,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        elevation: 2,
+        flexDirection: 'row',
+    },
+};
 
 const mapStateToProps = state => {
     if (state.data.data.params) {
