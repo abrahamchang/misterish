@@ -68,11 +68,11 @@ class Loading extends Component {
         }
 
         this.getItem('/misteryMetadata').then( (result) => {            
-            this.dataLength(result).then(  async (size) => {                  
-                 await this.getMisteryOfTheDay(size).then(async (res)=>{            //res undefined
-                    await console.log('res '+ res);            
-                     //this.props.sendData('mistery_of_the_day', resolve);   
-
+            this.dataLength(result).then( async (size) => {  
+                console.log('function: '+ {this.getMisteryOfTheDay(size)} );              
+                 await this.getMisteryOfTheDay(size).then( async (resolve)=>{            //res undefined
+                        await console.log('res '+ resolve);            
+                        //this.props.sendData('mistery_of_the_day', resolve);   
                     }).catch((err)=>{
                     console.log('toy aqui' + err);
                  });
