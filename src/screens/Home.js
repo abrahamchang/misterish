@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator, Text, ScrollView } from 'react-native';
 import { Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
@@ -33,6 +33,7 @@ class Home extends Component {
     componentWillReceiveProps(nextProps) {
         if (!this.state.cargando) {
             this.setState({ cargando: true });
+
             firebase.database().ref('/misteryMetadata').once('value')
                 .then((datos) => {
                     const data = datos.val();
@@ -50,7 +51,7 @@ class Home extends Component {
         }
     }
 
-    render() {
+     render() {
         if (this.state.cargando) {
             return (
                 <View style={{ flex: 1, backgroundColor: '#553285' }}>
@@ -58,8 +59,59 @@ class Home extends Component {
                 </View>
             );
         } else {
+            let dairyMist = 0;
+            let daily;
+            if(this.prepareData()[dairyMist]){
+                daily = this.prepareData()[dairyMist];
+            }else{
+                daily = {
+                    id: '',
+                    imageURL: '',
+                    name: '',
+                    description: '',
+                    dificulty: '',
+                    userID: '',
+                    reviews: '',
+                }
+            }
             return (
-                <View style={{ flex: 1, backgroundColor: '#553285' }}>
+                <ScrollView style={{ flex: 1, backgroundColor: '#553285' }}>
+                    <View style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
+                        <Text style={{ textAlign: 'center', 
+                            backgroundColor: 'transparent',
+                            color: 'white',
+                            fontSize: 16,
+                            fontWeight: '600',
+                            paddingTop: 10,
+                            paddingBottom: 10
+                        }}>
+                            Misteries of the day
+                        </Text>
+                    </View>
+                    <View style={{alignItems: 'center', }}>
+                        <MisteryDetail 
+                            id={daily.id}
+                            imageURL={daily.imageURL}
+                            name={daily.name}
+                            description={daily.description}
+                            difficulty={daily.dificulty}
+                            userID={daily.userID}
+                            reviews={daily.reviews}
+                            onPress={() => this.onPress(10)}
+                        />
+                     </View>
+                     <View style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
+                        <Text style={{ textAlign: 'center', 
+                            backgroundColor: 'transparent',
+                            color: 'white',
+                            fontSize: 16,
+                            fontWeight: '600',
+                            paddingTop: 10,
+                            paddingBottom: 10
+                        }}>
+                            Popular Misteries
+                        </Text>
+                    </View>
                     <FlatList
                         numColumns={3}
                         data={this.prepareData()}
@@ -75,13 +127,14 @@ class Home extends Component {
                             onPress={() => this.onPress(item.item.id)}
                         />}
                     />
-                </View>
+                </ScrollView>
             );
         }
     }
 }
 
 const mapStateToProps = state => {
+    console.log({state});
     if (state.data.data.params) {
         return {
             data: state.data.data.params,

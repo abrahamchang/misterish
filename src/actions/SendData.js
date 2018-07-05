@@ -1,6 +1,6 @@
-export default sendData = (datos) => {
+export default sendData = (type, datos) => {
 	return {
-		type: 'data_load',
+		type: type,
 		payload: datos
 	};
 };
