@@ -24,7 +24,7 @@ class Login extends Component {
     };
 
     loadOrButton() {
-        return this.state.cargando ? <ActivityIndicator size="large" color='#36175E'/> : <Button onPress={this.onClickLogin.bind(this)}>Log In</Button>
+        return this.state.cargando ? <ActivityIndicator size="large" color='#36175E'/> : <Button onPress={this.onClickLogin.bind(this)} disabled={!this.state.cargando}>Log In</Button>
     }
 
     componentWillMount() {
@@ -177,7 +177,10 @@ class Login extends Component {
                         <Text style={styles.otherText}>or go in as a</Text>
                     </View>
                     <View style={styles.otherOptionsContainer}>
-                        <Button onPress={this.onPressGuest.bind(this)}>
+                        <Button
+                            onPress={this.onPressGuest.bind(this)}
+                            disabled={!this.state.cargando}
+                        >
                             <Text style={styles.buttonText}>Guest</Text>
                         </Button>
                     </View>
