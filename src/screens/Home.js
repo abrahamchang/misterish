@@ -9,7 +9,9 @@ import { reloadHomeData } from '../actions';
 
 class Home extends Component {
     state = {
-        cargando: false
+        cargando: false,
+        completedMysteries: [],
+        progressMysteries: []
     };
 
     onPress(id) {
@@ -28,6 +30,7 @@ class Home extends Component {
 
     componentDidMount() {
         const { status } = Permissions.askAsync(Permissions.CAMERA);
+
     }
 
     componentWillReceiveProps(nextProps) {

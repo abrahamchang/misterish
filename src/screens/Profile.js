@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Image, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, Image, Text, TouchableOpacity, FlatList, ActivityIndicator, ScrollView } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase'
 import { connect } from 'react-redux';
+
 import MisteryDetail from '../components/MisteryDetail';
 import FriendDetail from '../components/FriendDetail';
 
@@ -77,7 +78,6 @@ class Profile extends Component {
                 });
         }
         this.setState({ friends: data, friendsLoaded: true })
-
     }
 
     componentWillMount() {
@@ -121,7 +121,7 @@ class Profile extends Component {
             else {
                 return (
                     <View style={tabSectionContainer}>
-                        <Text>A</Text>
+                        <ActivityIndicator size='large' color="#36175E" />
                     </View>
                 );
             }
@@ -151,7 +151,7 @@ class Profile extends Component {
             else {
                 return (
                     <View style={tabSectionContainer}>
-                        <Text>B</Text>
+                        <ActivityIndicator size='large' color="#36175E" />
                     </View>
                 );
             }
@@ -160,26 +160,27 @@ class Profile extends Component {
             if (this.state.friendsLoaded) {
                 return (
                     <View style={tabSectionContainer}>
-                        <FlatList
-                            numColumns={2}
-                            style={{ flex: 1 }}
-                            data={this.state.friends}
-                            keyExtractor={(item) => item.userID}
-                            renderItem={(item) => (
-                                <FriendDetail username={item.item.username} description={item.item.description} lvl={item.item.lvl} />
-                            )}
-                        />
+                        <ScrollView style={{ flex: 1 }}>
+                            {this.renderFriends()}
+                        </ScrollView>
                     </View>
                 );
             }
             else {
                 return (
                     <View style={tabSectionContainer}>
-                        <Text>B</Text>
+                        <ActivityIndicator size='large' color="#36175E" />
                     </View>
                 );
             }
         }
+    }
+
+    renderFriends() {
+        return this.state.friends.map(friends => {
+            return <FriendDetail username={friends.username} description={friends.description} lvl={friends.lvl}/>
+        }
+        );
     }
 
     changeTab(toTab) {
@@ -197,7 +198,6 @@ class Profile extends Component {
                 actions: [{
                     type: 'Navigation/INIT',
                     routeName: 'Login'
-                    //AQUI ME FALTA ALGO PERO NO ME ACUERDO
                 }]
             });
             this.props.navigation.dispatch(resetItems);
@@ -357,7 +357,6 @@ const styles = {
         marginBottom: 1,
         marginTop: 1,
         borderRadius: 5,
-        flex: 1
     }
 };
 
