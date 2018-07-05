@@ -20,8 +20,12 @@ class Loading extends Component {
                 let today = new Date();
                 today = today.toISOString().substring(0,10);
                 if(mistDate === today){                      
-                    return new Promise((resolve) => {
+                    return new Promise((resolve, reject) => {
+                        if(mistID !== undefined){
                             resolve(mistID);                        //<==== deberia devolver el id del numero en .then
+                        }else{
+                            reject("1- No devolvio Nada");
+                        }
                     });
                 }else{                                              
                     var newID = Math.floor((Math.random() * cantMisteries));
@@ -32,14 +36,15 @@ class Loading extends Component {
                         return new Promise((resolve,reject) => {
                             if(newID){
                                 console.log('devolvi un : ' + newID);           
-                                resolve(newID);                                 
+                                resolve(newID);                     //<====== deberia devolver el id nuevo generado en el .then                      
                             }
                             else{
-                                reject();
+                                reject("2- No devolvio nada");
                             }
                     });
                     }
-            }}).catch((err) => {
+            }
+        }).catch((err) => {
             console.log(err);
         });
 
@@ -62,13 +67,12 @@ class Loading extends Component {
             firebase.initializeApp(config);
         }
 
-        this.getItem('/misteryMetadata').then( (result) => {            //aca solicita todos los misterios
-            this.dataLength(result).then(  async (size) => {                  //cuento cuantos son exitosamente
-                console.log(size);
-                 await this.getMisteryOfTheDay(size).then((res)=>{            //y aca en funcion de cuantos son es que deberia devolver el newID de arriba en el res, pero entra en el catch y dice evaluando undefined
-                    console.log('res'+ res);             
-                     this.props.sendData('mistery_of_the_day', res);   
-                 
+        this.getItem('/misteryMetadata').then( (result) => {            
+            this.dataLength(result).then(  async (size) => {                  
+                 await this.getMisteryOfTheDay(size).then(async (res)=>{            //res undefined
+                    await console.log('res '+ res);            
+                     //this.props.sendData('mistery_of_the_day', resolve);   
+
                     }).catch((err)=>{
                     console.log('toy aqui' + err);
                  });
