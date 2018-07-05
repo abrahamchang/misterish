@@ -97,7 +97,7 @@ class Home extends Component {
                             difficulty={daily.dificulty}
                             userID={daily.userID}
                             reviews={daily.reviews}
-                            onPress={() => this.onPress(10)}
+                            onPress={() => this.onPress(daily.id)}
                         />
                      </View>
                      <View style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
