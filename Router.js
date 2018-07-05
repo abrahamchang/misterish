@@ -83,7 +83,7 @@ const Navigator = createStackNavigator(
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image
-                                source={require('./src/assets/settingsButton.png')}
+                                source={require('./src/assets/createMistery.png')}
                                 style={[styles.icon, { tintColor: tintColor }]}
                             />
                         )
