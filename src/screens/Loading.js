@@ -11,7 +11,6 @@ class Loading extends Component {
     getItem(item) {
         return firebase.database().ref(item).once("value");
     }
-
      dataLength(result){
         const params = result;
         const keys = Object.keys(params);
