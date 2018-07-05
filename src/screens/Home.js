@@ -59,7 +59,7 @@ class Home extends Component {
                 </View>
             );
         } else {
-            let dairyMist = 0;
+            let dairyMist = this.props.mistOfDay;
             let daily;
             if(this.prepareData()[dairyMist]){
                 daily = this.prepareData()[dairyMist];
@@ -134,12 +134,13 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log({state});
-    if (state.data.data.params) {
+    console.log(state.data.mistOfDay);
+    if (state.data.data.params && state.data.mistOfDay !== undefined) {
         return {
             data: state.data.data.params,
             reload: state.reload ? state.reload.reload : false,
-            user: state.data.data.user
+            user: state.data.data.user,
+            mistOfDay: state.data.mistOfDay
         };
     } else {
         if ((state.reload && typeof state.reload !== 'object') || state.reload === null) {

@@ -27,10 +27,9 @@ class Loading extends Component {
         if (!firebase.apps.length) {
             firebase.initializeApp(config);
         }
-
-        this.getItem('/misteryMetadata').then( (result) => {            //aca solicita todos los misterios
-            this.dataLength(result).then(  async (size) => {                  //cuento cuantos son exitosamente
-                firebase.database().ref('misteryOfTheDay').once('value').then((result) => {
+        await this.getItem('/misteryMetadata').then( async (result) => {            //aca solicita todos los misterios
+            await this.dataLength(result).then(  async (size) => {                  //cuento cuantos son exitosamente
+                await firebase.database().ref('misteryOfTheDay').once('value').then(async (result) => {
                     if (result) {
                         var mistID = result.child('id').val();
                         var mistDate = result.child('date').val().toString();
@@ -38,7 +37,7 @@ class Loading extends Component {
                         today = today.toISOString().substring(0, 10);
                         if (mistDate === today) {
                             console.log('aquí');
-                            this.props.sendData('mystery_of_the_day', mistID);
+                            await this.props.sendData('mistery_of_the_day', mistID);
                         } else {
                             console.log('allá');    
                             var newID = Math.floor((Math.random() * size));
@@ -46,7 +45,7 @@ class Loading extends Component {
                                 date: today,
                                 id: newID
                             });
-                            this.props.sendData('mystery_of_the_day', newID);
+                            await this.props.sendData('mistery_of_the_day', newID);
                         }
                     }
                 })
