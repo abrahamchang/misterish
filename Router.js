@@ -79,7 +79,7 @@ const Navigator = createStackNavigator(
                     }
                 },
                 MysteryCreator: {
-                    screen: Developing,
+                    screen: MysteryCreator,
                     navigationOptions: {
                         tabBarIcon: ({ tintColor }) => (
                             <Image
