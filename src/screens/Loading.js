@@ -12,7 +12,7 @@ class Loading extends Component {
         return firebase.database().ref(item).once("value");
     }
 
-     getMisteryOfTheDay(cantMisteries){
+     async getMisteryOfTheDay(cantMisteries){
          firebase.database().ref('/misteryOfTheDay').once("value").then( (result) => { //busco en la bd la referencia al misterio del dia
             if(result){                                              
                 var mistID = result.child("id").val();
@@ -57,21 +57,24 @@ class Loading extends Component {
         });
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         if (!firebase.apps.length) {
             firebase.initializeApp(config);
         }
 
         this.getItem('/misteryMetadata').then( (result) => {            //aca solicita todos los misterios
-            this.dataLength(result).then(  (size) => {                  //cuento cuantos son exitosamente
-                 this.getMisteryOfTheDay(size).then((res)=>{            //y aca en funcion de cuantos son es que deberia devolver el newID de arriba en el res, pero entra en el catch y dice evaluando undefined
-                     console.log('igual que arriba' + res);             
+            this.dataLength(result).then(  async (size) => {                  //cuento cuantos son exitosamente
+                console.log(size);
+                 await this.getMisteryOfTheDay(size).then((res)=>{            //y aca en funcion de cuantos son es que deberia devolver el newID de arriba en el res, pero entra en el catch y dice evaluando undefined
+                    console.log('res'+ res);             
                      this.props.sendData('mistery_of_the_day', res);   
-                 }).catch((err)=>{
-                    console.log(err);
+                 
+                    }).catch((err)=>{
+                    console.log('toy aqui' + err);
                  });
+
                 }).catch(err => {
-                    console.log(err);
+                    console.log('aqui si '+err);
                 });
 
             firebase.auth().onAuthStateChanged((user) => {
