@@ -5,6 +5,7 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
 import MisteryDetail from '../components/MisteryDetail';
+import MisteryOfTheDay from '../components/MisteryOfTheDay';
 import { reloadHomeData } from '../actions';
 
 class Home extends Component {
@@ -232,17 +233,17 @@ class Home extends Component {
                     Mistery of the day
                 </Text>
 
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285' }}>
-                <MisteryDetail
-                            id={daily.id}
-                            imageURL={daily.imageURL}
-                            name={daily.name}
-                            description={daily.description}
-                            difficulty={daily.dificulty}
-                            userID={daily.userID}
-                            reviews={daily.reviews}
-                            onPress={() => this.onPress(daily.id)}
-                        />
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285', padding: '1%' }}>
+                    <MisteryOfTheDay
+                        id={daily.id}
+                        imageURL={daily.imageURL}
+                        name={daily.name}
+                        description={daily.description}
+                        difficulty={daily.dificulty}
+                        userID={daily.userID}
+                        reviews={daily.reviews}
+                        onPress={() => this.onPress(daily.id)}
+                    />
                 </View>
                 <View style={{ flex: 3 }}>
                     <View style={tabContainer}>
