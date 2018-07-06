@@ -13,7 +13,7 @@ class Home extends Component {
     };
 
     onPress(id) {
-       this.props.navigation.navigate({ routeName: 'Scanner', params: id });
+       this.props.navigation.navigate({ routeName: 'Scanner', params: {id, user: this.props.user}});
     }
 
     prepareData() {
@@ -134,7 +134,6 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state.data.mistOfDay);
     if (state.data.data.params && state.data.mistOfDay !== undefined) {
         return {
             data: state.data.data.params,
@@ -147,13 +146,15 @@ const mapStateToProps = state => {
             return {
                 data: state.data.data,
                 reload: state.reload ? state.reload : false,
-                user: state.data.user
+                user: state.data.user,
+                mistOfDay: state.data.mistOfDay
             };
         } else if (state.reload.reload === true || state.reload.reload === false) {
             return {
                 data: state.data.data,
                 reload: state.reload.reload,
-                user: state.data.user
+                user: state.data.user,
+                mistOfDay: state.data.mistOfDay
             };
         }
     }

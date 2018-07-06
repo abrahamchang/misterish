@@ -36,10 +36,8 @@ class Loading extends Component {
                         var today = new Date();
                         today = today.toISOString().substring(0, 10);
                         if (mistDate === today) {
-                            console.log('aquí');
                             await this.props.sendData('mistery_of_the_day', mistID);
                         } else {
-                            console.log('allá');    
                             var newID = Math.floor((Math.random() * size));
                             firebase.database().ref('/misteryOfTheDay').set({
                                 date: today,
