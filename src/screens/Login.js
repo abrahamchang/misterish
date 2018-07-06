@@ -177,7 +177,7 @@ class Login extends Component {
                         <Text style={styles.otherText}>or go in as a</Text>
                     </View>
                     <View style={styles.otherOptionsContainer}>
-                        <Button onPress={this.onPressGuest.bind(this)}>
+                        <Button onPress={this.onPressGuest.bind(this)} disabled={this.state.cargando}>
                             <Text style={styles.buttonText}>Guest</Text>
                         </Button>
                     </View>

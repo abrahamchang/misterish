@@ -1,17 +1,26 @@
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
-const Button = ({ onPress, children }) => {
+const Button = ({ onPress, children, disabled }) => {
 
-    const { buttonStyle, textStyle } = styles;
-
-    return (
-        <TouchableOpacity onPress={onPress} style={buttonStyle}>
-            <Text style={textStyle}>
-                {children}
-            </Text>
-        </TouchableOpacity>
-    );
+    const { buttonStyle, textStyle, disabledStyle } = styles;
+    if (!disabled) {
+        return (
+            <TouchableOpacity onPress={onPress} style={buttonStyle}>
+                <Text style={textStyle}>
+                    {children}
+                </Text>
+            </TouchableOpacity>
+        );
+    } else {
+        return (
+            <TouchableOpacity onPress={onPress} style={buttonStyle} disabled={true}>
+                <Text style={textStyle}>
+                    {children}
+                </Text>
+            </TouchableOpacity>
+        );
+    }
 };
 
 const styles = {
@@ -32,7 +41,16 @@ const styles = {
         borderColor: '#36175E',
         marginLeft: 5,
         marginRight: 5
-
+    },
+    disabledStyle: {
+        flex: 1,
+        alignSelf: 'stretch',
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#36175E',
+        marginLeft: 5,
+        marginRight: 5
     }
 };
 

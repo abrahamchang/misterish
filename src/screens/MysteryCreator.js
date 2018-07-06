@@ -8,6 +8,7 @@ import {
     View
 } from 'react-native';
 import { ImagePicker } from 'expo';
+import firebase from 'firebase';
 import Button from '../components/common/Button';
 
 class MysteryCreator extends Component {
@@ -31,7 +32,9 @@ class MysteryCreator extends Component {
         } else {
             return (
                 <View>
-                    {this.displayError()}
+                    <View>
+                        {this.displayError()}
+                    </View>
                     <View style={styles.finalButtonContainer}>
                         <Button onPress={this.onClickCreate.bind(this)}>Create Mistery!</Button>
                     </View>
@@ -187,17 +190,53 @@ class MysteryCreator extends Component {
     }
 
     onClickCreate() {
-        // Aquí falta validar que cada clue tenga todos los campos correspondientes
-        // si falta alguno, hay que colocar el state a error: true y errorMsg: mensaje
         this.setState({ cargando: true });
-        for (let i = 0; i < this.state.clues.length; i++) {
+        var string;
+        var cambio = false;
+        console.log(this.state.clues);
+        for (let i = 0; i < this.state.clues.length - 1; i++) {
             const clue = this.state.clues[i];
-            if (clue.type.length === 0 || clue.sol.length === 0 || clue.title.length === 0) {
-                this.setState({ error: true, errorMsg: `Empty field in ${(i + 1).toString()}` });
-                break;
+            if (clue.clue.length === 0 || clue.sol.length === 0 || clue.title.length === 0) {
+                string = `Empty field in Clue n° ${(i + 1).toString()}`;
+                cambio = true;
             }
         }
-        // Si pasa todas las validaciones, aquí hay que llamar a la BD
+        if (cambio) {
+            this.setState({ error: true, errorMsg: string });
+            return;
+        } else {
+            firebase.database().ref('/misteryClues').once('value').then((cluesSnapshot) => {
+                const clues = cluesSnapshot.val();
+                const array = this.state.clues;
+                array.pop();
+                firebase.database().ref(`/misteryClues/${clues.length}`).set(array).then(() => {
+                    firebase.database().ref('/misteryMetadata').once('value').then((metaSnapshot) => {
+                        const metadata = metaSnapshot.val();
+                        firebase.database().ref(`/misteryMetadata/${metadata.length}`).set({
+                            description: 'UNIMET',
+                            dificulty: this.state.difficulty,
+                            id: metadata.length,
+                            imageURL: this.state.image,
+                            name: this.state.name,
+                            reviews: 0,
+                            userID: 'Misterish'
+                        }).then(() => {
+                            this.setState({
+                                main: true,
+                                name: '',
+                                error: false,
+                                errorMsg: '',
+                                clueNumber: 1,
+                                difficulty: 'Easy',
+                                image: null,
+                                clues: null,
+                                cargando: false
+                            });
+                        });
+                    });
+                });
+            }).catch((err) => console.error(err));
+        }
     }
 
     onClickReturn() {
@@ -228,9 +267,11 @@ class MysteryCreator extends Component {
                         <TextInput
                             placeholder={'Title'}
                             onChangeText={(text) => {
-                                this.setState({ title: text });
+                                var copy = this.state.clues;
+                                copy[clue.item.id].title = text;
+                                this.setState({ clues: copy });
                             }}
-                            value={this.state.title}
+                            value={clue.title}
                             style={styles.clueField}
                             underlineColorAndroid={'#36175E'}
                             selectionColor={'rgba(54, 23, 94, 0.7)'}
@@ -241,9 +282,11 @@ class MysteryCreator extends Component {
                         <TextInput
                             placeholder={'Write your clue'}
                             onChangeText={(text) => {
-                                this.setState({ clue: text });
+                                var copy = this.state.clues;
+                                copy[clue.item.id].clue = text;
+                                this.setState({ clues: copy });
                             }}
-                            value={this.state.clue}
+                            value={clue.clue}
                             style={styles.clueField}
                             underlineColorAndroid={'#36175E'}
                             selectionColor={'rgba(54, 23, 94, 0.7)'}
@@ -254,9 +297,11 @@ class MysteryCreator extends Component {
                         <TextInput
                             placeholder={'Write the solution'}
                             onChangeText={(text) => {
-                                this.setState({ sol: text });
+                                var copy = this.state.clues;
+                                copy[clue.item.id].sol = text;
+                                this.setState({ clues: copy });
                             }}
-                            value={this.state.sol}
+                            value={clue.sol}
                             style={styles.clueField}
                             underlineColorAndroid={'#36175E'}
                             selectionColor={'rgba(54, 23, 94, 0.7)'}
