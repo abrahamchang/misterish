@@ -23,7 +23,7 @@ class Profile extends Component {
     };
 
     onPress(id) {
-        this.props.navigation.navigate({ routeName: 'Scanner', params: id });
+        this.props.navigation.navigate({ routeName: 'Scanner', params: { id, user: this.props.user } });
     }
 
     async prepareCreations() {
