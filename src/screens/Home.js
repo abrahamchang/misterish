@@ -80,8 +80,8 @@ class Home extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (!this.state.cargando) {
+            console.log('mothafuckak')
             this.setState({ cargando: true });
-
             firebase.database().ref('/misteryMetadata').once('value')
                 .then((datos) => {
                     const data = datos.val();
@@ -91,6 +91,7 @@ class Home extends Component {
                         reload: this.props.reload
                     };
                     this.props.reloadHomeData(datos);
+                    this.prepareData();
                     this.setState({ cargando: false });
                 })
                 .catch((err) => {
@@ -136,7 +137,7 @@ class Home extends Component {
                     <View style={tabSectionContainer}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', }}>
                             <ActivityIndicator size='large' color="#36175E" />
-                            <Text style={loadingText}>Wow ... It seems you have no mystery in progress!</Text>
+                            <Text style={loadingText}>Wow... It seems you have no misteries in progress!</Text>
                         </View>
                     </View>
                 );
@@ -200,7 +201,7 @@ class Home extends Component {
                     <View style={tabSectionContainer}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', }}>
                             <ActivityIndicator size='large' color="#36175E" />
-                            <Text style={loadingText}>Wow ... It seems you have no mystery completed!</Text>
+                            <Text style={loadingText}>Wow... It seems you haven't completed any misteries!</Text>
                         </View>
                     </View>
                 );
@@ -226,46 +227,53 @@ class Home extends Component {
                 reviews: '',
             }
         }
-        return (
-            <View style={{ flex: 1 }}>
-                <Text style={{ textAlign: 'center', color: '#553285', fontSize: 18, margin: 2 }}>
-                    Mistery of the day
-                </Text>
+        if (this.state.cargando) {
+            return (
+                <ActivityIndicator size="large" color="#36175E" />
+            );
+        } else {
+            return (
+                <View style={{ flex: 1 }}>
+                    <Text style={{ textAlign: 'center', color: '#553285', fontSize: 18, margin: 2 }}>
+                        Mistery of the day
+                    </Text>
 
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285' }}>
-                <MisteryDetail
-                            id={daily.id}
-                            imageURL={daily.imageURL}
-                            name={daily.name}
-                            description={daily.description}
-                            difficulty={daily.dificulty}
-                            userID={daily.userID}
-                            reviews={daily.reviews}
-                            onPress={() => this.onPress(daily.id)}
-                        />
-                </View>
-                <View style={{ flex: 3 }}>
-                    <View style={tabContainer}>
-                        <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
-                            <Text style={{ color: 'white' }}>In Progress</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(1)}>
-                            <Text style={{ color: 'white' }}>New Mysteries</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(2)}>
-                            <Text style={{ color: 'white' }}>Completed</Text>
-                        </TouchableOpacity>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285' }}>
+                    <MisteryDetail
+                                id={daily.id}
+                                imageURL={daily.imageURL}
+                                name={daily.name}
+                                description={daily.description}
+                                difficulty={daily.dificulty}
+                                userID={daily.userID}
+                                reviews={daily.reviews}
+                                onPress={() => this.onPress(daily.id)}
+                            />
                     </View>
-                    {this.renderTab()}
+                    <View style={{ flex: 3 }}>
+                        <View style={tabContainer}>
+                            <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
+                                <Text style={{ color: 'white' }}>In Progress</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(1)}>
+                                <Text style={{ color: 'white' }}>New Mysteries</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(2)}>
+                                <Text style={{ color: 'white' }}>Completed</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {this.renderTab()}
+                    </View>
                 </View>
-            </View>
-        );
+            );
+        }
     }
 }
 
 const mapStateToProps = state => {
+    console.log(state);
     if (state.data.data.params && state.data.mistOfDay !== undefined) {
         return {
             data: state.data.data.params,
