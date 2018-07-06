@@ -81,11 +81,15 @@ class CameraScanner extends Component {
         var user = this.props.navigation.state.params.user.userID;
         firebase.database().ref(`/users/${user}/playingList/unfinishedMysteries/${misteryIndex}/clueIndex`).once('value')
         .then((res)=>{
-            var index = res.val();
+            var index;
+            if(res.val() !== null){
+            index = res.val();
             this.setState((prevState, props) => {
                 return {clueIndex: index};
               });
-
+            }else{
+                index = 0;
+            }
             this.state.clueIndex = index;
         }).catch((err)=>{
             console.log(err);
