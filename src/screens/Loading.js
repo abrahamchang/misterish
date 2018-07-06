@@ -11,24 +11,62 @@ class Loading extends Component {
     getItem(item) {
         return firebase.database().ref(item).once("value");
     }
+     dataLength(result){
+        const params = result;
+        const keys = Object.keys(params);
+        const data = [];
+        keys.forEach((key) => {
+            data.push(params[key]);
+        });
+        return new Promise((resolve) => {
+            resolve(data.length);
+        });
+    }
 
-    componentDidMount() {
+    async componentDidMount() {
         if (!firebase.apps.length) {
             firebase.initializeApp(config);
         }
-        this.getItem('/misteryMetadata').then((result) => {
+        await this.getItem('/misteryMetadata').then( async (result) => {            //aca solicita todos los misterios
+            await this.dataLength(result).then(  async (size) => {                  //cuento cuantos son exitosamente
+                await firebase.database().ref('misteryOfTheDay').once('value').then(async (result) => {
+                    if (result) {
+                        var mistID = result.child('id').val();
+                        var mistDate = result.child('date').val().toString();
+                        var today = new Date();
+                        today = today.toISOString().substring(0, 10);
+                        if (mistDate === today) {
+                            await this.props.sendData('mistery_of_the_day', mistID);
+                        } else {
+                            var newID = Math.floor((Math.random() * size));
+                            firebase.database().ref('/misteryOfTheDay').set({
+                                date: today,
+                                id: newID
+                            });
+                            await this.props.sendData('mistery_of_the_day', newID);
+                        }
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            }).catch(err => {
+                console.log('aqui si '+err);
+            });
+
             firebase.auth().onAuthStateChanged((user) => {
                 if (user !== null) {
                     firebase.database().ref(`/users/${user.uid}`).once('value').then((response) => {
                         let datos = {
                             params: result.val(),
-                            user: response.val()
+                            user: response.val(),
+                            
                         };
                         const resetAction = StackActions.reset({
                            index: 0,
                            actions: [NavigationActions.navigate({ routeName: 'Root'})]
                         });
-                        this.props.sendData(datos);
+                        this.props.sendData('data_load', datos);
                         this.props.navigation.dispatch(resetAction);
                     }).catch((err) => {
                         console.log(err);
@@ -42,7 +80,7 @@ class Loading extends Component {
                        index: 0,
                        actions: [NavigationActions.navigate({ routeName: 'Login' })]
                     });
-                    this.props.sendData(datos);
+                    this.props.sendData('data_load', datos);
                     this.props.navigation.dispatch(resetAction);
                 }
             });

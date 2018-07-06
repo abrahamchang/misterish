@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
+import { View, FlatList, ActivityIndicator, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Permissions } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
@@ -23,7 +23,7 @@ class Home extends Component {
     };
 
     onPress(id) {
-        this.props.navigation.navigate({ routeName: 'Scanner', params: id });
+       this.props.navigation.navigate({ routeName: 'Scanner', params: {id, user: this.props.user}});
     }
 
     prepareData() {
@@ -60,6 +60,16 @@ class Home extends Component {
         }
     }
 
+    prepareMistOfTheDay(){
+        const params = this.props.data;
+        const keys = Object.keys(params);
+        const data = [];
+        keys.forEach((key) => {
+            data.push(params[key]);
+        });
+        return data;
+    }
+
     componentDidMount() {
         const { status } = Permissions.askAsync(Permissions.CAMERA);
         this.prepareData();
@@ -69,6 +79,7 @@ class Home extends Component {
     componentWillReceiveProps(nextProps) {
         if (!this.state.cargando) {
             this.setState({ cargando: true });
+
             firebase.database().ref('/misteryMetadata').once('value')
                 .then((datos) => {
                     const data = datos.val();
@@ -197,8 +208,48 @@ class Home extends Component {
 
     render() {
         const { tabContainer, buttonContainerIn, buttonContainerAc } = styles;
+        let dairyMist = this.props.mistOfDay;
+        console.log(dairyMist);
+        let daily;
+        if(this.prepareMistOfTheDay()[dairyMist]){
+            daily = this.prepareMistOfTheDay()[dairyMist];
+        }else{
+            daily = {
+                id: '',
+                imageURL: '',
+                name: '',
+                description: '',
+                dificulty: '',
+                userID: '',
+                reviews: '',
+           }
+        }
         return (
-            <View style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1,  backgroundColor: '#553285' }}>
+            <View style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
+            <Text style={{ textAlign: 'center', 
+                backgroundColor: 'transparent',
+                color: 'white',
+                fontSize: 16,
+                fontWeight: '600',
+                paddingTop: 10,
+                paddingBottom: 10
+            }}>
+                Mistery of the day
+            </Text>
+        </View>
+        <View style={{alignItems: 'center', }}>
+            <MisteryDetail 
+                id={daily.id}
+                imageURL={daily.imageURL}
+                name={daily.name}
+                description={daily.description}
+                difficulty={daily.dificulty}
+                userID={daily.userID}
+                reviews={daily.reviews}
+                onPress={() => this.onPress(daily.id)}
+            />
+         </View>
                 <View style={tabContainer}>
                     <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
                         <Text style={{ color: 'white' }}>In Progress</Text>
@@ -213,31 +264,34 @@ class Home extends Component {
                     </TouchableOpacity>
                 </View>
                 {this.renderTab()}
-            </View>
+            </ScrollView>
 
         );
     }
 }
 
 const mapStateToProps = state => {
-    if (state.data.data.params) {
+    if (state.data.data.params && state.data.mistOfDay !== undefined) {
         return {
             data: state.data.data.params,
             reload: state.reload ? state.reload.reload : false,
-            user: state.data.data.user
+            user: state.data.data.user,
+            mistOfDay: state.data.mistOfDay
         };
     } else {
         if ((state.reload && typeof state.reload !== 'object') || state.reload === null) {
             return {
                 data: state.data.data,
                 reload: state.reload ? state.reload : false,
-                user: state.data.user
+                user: state.data.user,
+                mistOfDay: state.data.mistOfDay
             };
         } else if (state.reload.reload === true || state.reload.reload === false) {
             return {
                 data: state.data.data,
                 reload: state.reload.reload,
-                user: state.data.user
+                user: state.data.user,
+                mistOfDay: state.data.mistOfDay
             };
         }
     }
