@@ -237,7 +237,7 @@ class Home extends Component {
                         Mistery of the day
                     </Text>
 
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285', padding: '1%' }}>
+                    <View style={{ flex: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285', padding: '1%' }}>
                         <MisteryOfTheDay
                             id={daily.id}
                             imageURL={daily.imageURL}
@@ -249,7 +249,7 @@ class Home extends Component {
                             onPress={() => this.onPress(daily.id)}
                         />
                     </View>
-                    <View style={{ flex: 3 }}>
+                    <View style={{ flex: 23 }}>
                         <View style={tabContainer}>
                             <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
                                 <Text style={{ color: 'white' }}>In Progress</Text>
