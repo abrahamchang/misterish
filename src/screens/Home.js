@@ -5,6 +5,7 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
 import { connect } from 'react-redux';
 import MisteryDetail from '../components/MisteryDetail';
+import MisteryOfTheDay from '../components/MisteryOfTheDay';
 import { reloadHomeData } from '../actions';
 
 class Home extends Component {
@@ -80,8 +81,8 @@ class Home extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (!this.state.cargando) {
-            console.log('mothafuckak')
             this.setState({ cargando: true });
+
             firebase.database().ref('/misteryMetadata').once('value')
                 .then((datos) => {
                     const data = datos.val();
@@ -137,7 +138,7 @@ class Home extends Component {
                     <View style={tabSectionContainer}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', }}>
                             <ActivityIndicator size='large' color="#36175E" />
-                            <Text style={loadingText}>Wow... It seems you have no misteries in progress!</Text>
+                            <Text style={loadingText}>Wow ... It seems you have no mystery in progress!</Text>
                         </View>
                     </View>
                 );
@@ -201,7 +202,7 @@ class Home extends Component {
                     <View style={tabSectionContainer}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', }}>
                             <ActivityIndicator size='large' color="#36175E" />
-                            <Text style={loadingText}>Wow... It seems you haven't completed any misteries!</Text>
+                            <Text style={loadingText}>Wow ... It seems you have no mystery completed!</Text>
                         </View>
                     </View>
                 );
@@ -228,9 +229,7 @@ class Home extends Component {
             }
         }
         if (this.state.cargando) {
-            return (
-                <ActivityIndicator size="large" color="#36175E" />
-            );
+            return <ActivityIndicator size="large" color="#36175E" />;
         } else {
             return (
                 <View style={{ flex: 1 }}>
@@ -238,17 +237,17 @@ class Home extends Component {
                         Mistery of the day
                     </Text>
 
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285' }}>
-                    <MisteryDetail
-                                id={daily.id}
-                                imageURL={daily.imageURL}
-                                name={daily.name}
-                                description={daily.description}
-                                difficulty={daily.dificulty}
-                                userID={daily.userID}
-                                reviews={daily.reviews}
-                                onPress={() => this.onPress(daily.id)}
-                            />
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285', padding: '1%' }}>
+                        <MisteryOfTheDay
+                            id={daily.id}
+                            imageURL={daily.imageURL}
+                            name={daily.name}
+                            description={daily.description}
+                            difficulty={daily.dificulty}
+                            userID={daily.userID}
+                            reviews={daily.reviews}
+                            onPress={() => this.onPress(daily.id)}
+                        />
                     </View>
                     <View style={{ flex: 3 }}>
                         <View style={tabContainer}>
@@ -273,7 +272,6 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state);
     if (state.data.data.params && state.data.mistOfDay !== undefined) {
         return {
             data: state.data.data.params,

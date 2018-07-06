@@ -8,7 +8,6 @@ import {
     View
 } from 'react-native';
 import { ImagePicker } from 'expo';
-import TarjetaNM from '../components/TarjetaNM';
 import Button from '../components/common/Button';
 
 class MysteryCreator extends Component {
@@ -192,7 +191,13 @@ class MysteryCreator extends Component {
     }
 
     onClickCreate() {
-
+        // Aquí falta validar que cada clue tenga todos los campos correspondientes
+        // si falta alguno, hay que colocar el state a error: true y errorMsg: mensaje
+        this.setState({ cargando: true });
+        for (let i = 0; i < this.state.clues.length; i++) {
+            const clue = this.state.clues[i];
+        }
+        // Si pasa todas las validaciones, aquí hay que llamar a la BD
     }
 
     onClickReturn() {
