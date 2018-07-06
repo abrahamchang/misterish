@@ -23,30 +23,32 @@ class Home extends Component {
     };
 
     onPress(id) {
-       this.props.navigation.navigate({ routeName: 'Scanner', params: {id, user: this.props.user}});
+        this.props.navigation.navigate({ routeName: 'Scanner', params: { id, user: this.props.user } });
     }
 
     prepareData() {
         if (this.props.data) {
             const mysteries = this.props.data;
             const allKeys = Object.keys(mysteries);
-            if (this.props.user.playingList.unfinishedMysteries) {
-                const unfinishedKeys = Object.keys(this.props.user.playingList.unfinishedMysteries);
-                const dataUnfinished = [];
-                unfinishedKeys.forEach((key) => {
-                    dataUnfinished.push(mysteries[key]);
-                    delete allKeys[key];
-                });
-                this.setState({ unfinishedMysteries: dataUnfinished, unfinished: true });
-            }
-            if (this.props.user.playingList.completedMysteries) {
-                const completedKeys = Object.keys(this.props.user.playingList.completedMysteries);
-                const dataCompleted = [];
-                completedKeys.forEach((key) => {
-                    dataCompleted.push(mysteries[key]);
-                    delete allKeys[key];
-                });
-                this.setState({ completedMysteries: dataCompleted, completed: true });
+            if (this.props.user) {
+                if (this.props.user.playingList.unfinishedMysteries) {
+                    const unfinishedKeys = Object.keys(this.props.user.playingList.unfinishedMysteries);
+                    const dataUnfinished = [];
+                    unfinishedKeys.forEach((key) => {
+                        dataUnfinished.push(mysteries[key]);
+                        delete allKeys[key];
+                    });
+                    this.setState({ unfinishedMysteries: dataUnfinished, unfinished: true });
+                }
+                if (this.props.user.playingList.completedMysteries) {
+                    const completedKeys = Object.keys(this.props.user.playingList.completedMysteries);
+                    const dataCompleted = [];
+                    completedKeys.forEach((key) => {
+                        dataCompleted.push(mysteries[key]);
+                        delete allKeys[key];
+                    });
+                    this.setState({ completedMysteries: dataCompleted, completed: true });
+                }
             }
             const dataNew = [];
             allKeys.forEach((key) => {
@@ -60,7 +62,7 @@ class Home extends Component {
         }
     }
 
-    prepareMistOfTheDay(){
+    prepareMistOfTheDay() {
         const params = this.props.data;
         const keys = Object.keys(params);
         const data = [];
@@ -211,9 +213,9 @@ class Home extends Component {
         let dairyMist = this.props.mistOfDay;
         console.log(dairyMist);
         let daily;
-        if(this.prepareMistOfTheDay()[dairyMist]){
+        if (this.prepareMistOfTheDay()[dairyMist]) {
             daily = this.prepareMistOfTheDay()[dairyMist];
-        }else{
+        } else {
             daily = {
                 id: '',
                 imageURL: '',
@@ -222,50 +224,43 @@ class Home extends Component {
                 dificulty: '',
                 userID: '',
                 reviews: '',
-           }
+            }
         }
         return (
-            <ScrollView style={{ flex: 1,  backgroundColor: '#553285' }}>
-            <View style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
-            <Text style={{ textAlign: 'center', 
-                backgroundColor: 'transparent',
-                color: 'white',
-                fontSize: 16,
-                fontWeight: '600',
-                paddingTop: 10,
-                paddingBottom: 10
-            }}>
-                Mistery of the day
-            </Text>
-        </View>
-        <View style={{alignItems: 'center', }}>
-            <MisteryDetail 
-                id={daily.id}
-                imageURL={daily.imageURL}
-                name={daily.name}
-                description={daily.description}
-                difficulty={daily.dificulty}
-                userID={daily.userID}
-                reviews={daily.reviews}
-                onPress={() => this.onPress(daily.id)}
-            />
-         </View>
-                <View style={tabContainer}>
-                    <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
-                        <Text style={{ color: 'white' }}>In Progress</Text>
-                    </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+                <Text style={{ textAlign: 'center', color: '#553285', fontSize: 18, margin: 2 }}>
+                    Mistery of the day
+                </Text>
 
-                    <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(1)}>
-                        <Text style={{ color: 'white' }}>New Mysteries</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(2)}>
-                        <Text style={{ color: 'white' }}>Completed</Text>
-                    </TouchableOpacity>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#553285' }}>
+                <MisteryDetail
+                            id={daily.id}
+                            imageURL={daily.imageURL}
+                            name={daily.name}
+                            description={daily.description}
+                            difficulty={daily.dificulty}
+                            userID={daily.userID}
+                            reviews={daily.reviews}
+                            onPress={() => this.onPress(daily.id)}
+                        />
                 </View>
-                {this.renderTab()}
-            </ScrollView>
+                <View style={{ flex: 3 }}>
+                    <View style={tabContainer}>
+                        <TouchableOpacity style={this.amIActive(0) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(0)}>
+                            <Text style={{ color: 'white' }}>In Progress</Text>
+                        </TouchableOpacity>
 
+                        <TouchableOpacity style={this.amIActive(1) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(1)}>
+                            <Text style={{ color: 'white' }}>New Mysteries</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={this.amIActive(2) ? buttonContainerIn : buttonContainerAc} onPress={() => this.changeTab(2)}>
+                            <Text style={{ color: 'white' }}>Completed</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {this.renderTab()}
+                </View>
+            </View>
         );
     }
 }

@@ -95,7 +95,7 @@ class Profile extends Component {
 
     renderTab() {
         const { tabSectionContainer } = styles;
-        
+
         if (this.state.tabIndex === 0) {
             if (this.state.creationsLoaded) {
                 return (
@@ -178,7 +178,12 @@ class Profile extends Component {
 
     renderFriends() {
         return this.state.friends.map(friends => {
-            return <FriendDetail username={friends.username} description={friends.description} lvl={friends.lvl}/>
+            return <FriendDetail
+                username={friends.username}
+                description={friends.description}
+                lvl={friends.lvl}
+                key={friends}
+            />
         }
         );
     }
