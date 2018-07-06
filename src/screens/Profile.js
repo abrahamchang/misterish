@@ -41,11 +41,11 @@ class Profile extends Component {
                     console.log('Ocurrio un error muy grave');
                 });
         }
-        this.setState({ creations: data, creationsLoaded: true })
+        this.setState({ creations: data, creationsLoaded: true });
     }
 
     async prepareProgress() {
-        const progress = this.props.user.playingList.completedMysteries;
+        const progress = Object.keys(this.props.user.playingList.completedMysteries);
         const size = progress.length;
         const data = [];
 
@@ -59,7 +59,7 @@ class Profile extends Component {
                     console.log('Ocurrió un error muy grave');
                 });
         }
-        this.setState({ progress: data, progressLoaded: true })
+        this.setState({ progress: data, progressLoaded: true });
     }
 
     async prepareFriends() {
@@ -77,7 +77,7 @@ class Profile extends Component {
                     console.log('Ocurrio un error muy grave');
                 });
         }
-        this.setState({ friends: data, friendsLoaded: true })
+        this.setState({ friends: data, friendsLoaded: true });
     }
 
     componentWillMount() {
@@ -178,7 +178,12 @@ class Profile extends Component {
 
     renderFriends() {
         return this.state.friends.map(friends => {
-            return <FriendDetail username={friends.username} description={friends.description} lvl={friends.lvl}/>
+            return <FriendDetail
+                username={friends.username}
+                description={friends.description}
+                lvl={friends.lvl}
+                key={friends}
+            />
         }
         );
     }

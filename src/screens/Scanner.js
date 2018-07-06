@@ -4,10 +4,17 @@ import firebase from 'firebase';
 import { Audio, BarCodeScanner, Camera, Location, Permissions } from 'expo';
 import moment from 'moment';
 
+import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
+import * as Actions from '../actions';
+
 import { StackActions, NavigationActions } from 'react-navigation';
 import Alert from '../components/Alert';
 import Modal from 'react-native-modal';
 import Notepad from '../components/Notepad';
+
+
+
 
 const MAXIMUM_RADIUS = 0.15;
 const MAXIMUM_TIME_DIFFERENCE = 5;
@@ -23,6 +30,7 @@ class CameraScanner extends Component {
         clues: [],
         sounds: [],
         clueIndex: 0,
+        misteryIndex: 0,
         GIF: false,
         modalVisible: false,
         victoria: false,
@@ -32,6 +40,7 @@ class CameraScanner extends Component {
     async componentWillMount() {
         await this.askForLocationPermission();
         await this.askForCameraPermission();
+
     }
 
     async askForCameraPermission() {
@@ -67,11 +76,33 @@ class CameraScanner extends Component {
         }
     }
 
+    findUnsolvedClueIndex(){
+        var misteryIndex = this.state.misteryIndex;
+        var user = this.props.navigation.state.params.user.userID;
+        firebase.database().ref(`/users/${user}/playingList/unfinishedMysteries/${misteryIndex}/clueIndex`).once('value')
+        .then((res)=>{
+            var index;
+            if(res.val() !== null){
+            index = res.val();
+            this.setState((prevState, props) => {
+                return {clueIndex: index};
+              });
+            }else{
+                index = 0;
+            }
+            this.state.clueIndex = index;
+        }).catch((err)=>{
+            console.log(err);
+        });
+    }
+
+
     findClues() {
-        let index = this.props.navigation.state.params;
+        let index = this.props.navigation.state.params.id;
         if (index === undefined) {
             index = 0;
         }
+        this.state.misteryIndex = index;
         firebase.database().ref(`/misteryClues/${index}`).once('value')
             .then((snapshotClues) => {
                 let clues = snapshotClues.val();
@@ -92,6 +123,7 @@ class CameraScanner extends Component {
         const { doIHaveCameraPermission, doIHaveLocationPermission } = this.state;
         if (this.state.cargando) {
             this.findClues();
+            this.findUnsolvedClueIndex();
             return (
                 <View style={styles.loadingView}>
                     <ActivityIndicator size='large' color="#36175E" />
@@ -140,7 +172,7 @@ class CameraScanner extends Component {
                             <Notepad clues={this.state.clues} index={this.state.clueIndex} childOn={true} exitToApp={this.getMeOut.bind(this)}>
                                 <Alert
                                     title={'Exit'}
-                                    text={'Are you sure you want to leave?\nYou will lose your progress'}
+                                    text={'Are you sure you want to leave?\nYou will lose your progress if you are playing as a guest.'}
                                     onPressCancel={this.onPressCancel.bind(this)}
                                     onPressOk={this.onPressOk.bind(this)}
                                 />
@@ -227,6 +259,35 @@ class CameraScanner extends Component {
     }
 
     goHome() {
+        var misteryIndex = this.state.misteryIndex;
+        var clueIndex = this.state.clueIndex;
+        var user = this.props.user.userID;
+        var unfMist = firebase.database().ref(`/users/${user}/playingList/unfinishedMysteries`);
+        unfMist.child(misteryIndex).once('value')
+        .then((result)=>{
+            if(result.child('clueIndex').val() !== null){
+                unfMist.child(misteryIndex).set({
+                    clueIndex: clueIndex,
+                })
+            }else{
+                unfMist.once('value').then((res)=>{
+                    res = res.val();
+                    const keys = Object.keys(res);
+                    var newObj = {};
+                    keys.forEach((key) => {
+                        newObj[key] = res[key];
+                    });;
+                    var newIndex = {clueIndex: clueIndex};
+                    newObj[misteryIndex] = newIndex;
+                    unfMist.set(newObj);
+                }).catch((err)=>{
+                  console.log(err);  
+                });
+            }
+        }).catch((err)=>{
+            console.log(err);
+        });
+
         const resetAction = StackActions.reset({
             index: 0,
             actions: [NavigationActions.navigate({ routeName: 'Loading' })]
@@ -276,6 +337,18 @@ class CameraScanner extends Component {
     }
 }
 
+ function mapStateToProps(state, props) {
+    return {
+        user: state.data.user
+    }
+}
+
+ function mapDispatchToProps(dispatch) {
+    return bindActionCreators(Actions, dispatch);
+}
+
+
+
 const styles = {
     loadingView: {
         justifyContent: 'center',
@@ -312,4 +385,4 @@ const styles = {
     }
 };
 
-export default CameraScanner;
+export default connect(mapStateToProps, mapDispatchToProps)(CameraScanner);

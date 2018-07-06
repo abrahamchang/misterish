@@ -19,9 +19,9 @@ class Header extends Component {
                     <Text style={styles.textoStyle}>{this.props.tituloHeader}</Text>
                 </View>
 
-                <TouchableOpacity style={styles.contenedorBoton}>
-                    <Image style={styles.botonesStyle} source={require('../assets/search.png')} />
-                </TouchableOpacity>
+                <View style={styles.contenedorBoton} />
+                    
+                
             </View>
         );
     }
