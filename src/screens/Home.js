@@ -11,10 +11,15 @@ class Home extends Component {
     state = {
         cargando: false,
         tabIndex: 1,
+
         newMysteries: [],
+        new: false,
+
         completedMysteries: [],
+        completed: false,
+
         unfinishedMysteries: [],
-        mysteriesLoaded: false
+        unfinished: false,
     };
 
     onPress(id) {
@@ -22,32 +27,37 @@ class Home extends Component {
     }
 
     prepareData() {
-        const mysteries = this.props.data;
-        const allKeys = Object.keys(mysteries);
-
-        const unfinishedKeys = Object.keys(this.props.user.playingList.unfinishedMysteries);
-        const dataUnfinished = [];
-        unfinishedKeys.forEach((key) => {
-            dataUnfinished.push(mysteries[key]);
-            delete allKeys[key];
-        });
-        this.setState({ unfinishedMysteries: dataUnfinished });
-
-        const completedKeys = Object.keys(this.props.user.playingList.completedMysteries);
-        const dataCompleted = [];
-        completedKeys.forEach((key) => {
-            dataCompleted.push(mysteries[key]);
-            delete allKeys[key];
-        });
-        this.setState({ completedMysteries: dataCompleted });
-
-        const dataNew = [];
-        allKeys.forEach((key) => {
-            if (key != undefined) {
-                dataNew.push(mysteries[key]);
+        if (this.props.data) {
+            const mysteries = this.props.data;
+            const allKeys = Object.keys(mysteries);
+            if (this.props.user.playingList.unfinishedMysteries) {
+                const unfinishedKeys = Object.keys(this.props.user.playingList.unfinishedMysteries);
+                const dataUnfinished = [];
+                unfinishedKeys.forEach((key) => {
+                    dataUnfinished.push(mysteries[key]);
+                    delete allKeys[key];
+                });
+                this.setState({ unfinishedMysteries: dataUnfinished, unfinished: true });
             }
-        });
-        this.setState({ newMysteries: dataNew, mysteriesLoaded: true });
+            if (this.props.user.playingList.completedMysteries) {
+                const completedKeys = Object.keys(this.props.user.playingList.completedMysteries);
+                const dataCompleted = [];
+                completedKeys.forEach((key) => {
+                    dataCompleted.push(mysteries[key]);
+                    delete allKeys[key];
+                });
+                this.setState({ completedMysteries: dataCompleted, completed: true });
+            }
+            const dataNew = [];
+            allKeys.forEach((key) => {
+                if (key != undefined) {
+                    dataNew.push(mysteries[key]);
+                }
+            });
+            this.setState({ newMysteries: dataNew, new: true });
+        } else {
+            console.log("Ocurrio un problema muy grave en Home > 'this.props.data' no existe. ");
+        }
     }
 
     componentDidMount() {
@@ -85,9 +95,10 @@ class Home extends Component {
     }
 
     renderTab() {
-        const { tabSectionContainer } = styles;
-        if (this.state.mysteriesLoaded) {
-            if (this.state.tabIndex === 0) {
+        const { tabSectionContainer, loadingText } = styles;
+
+        if (this.state.tabIndex === 0) {
+            if (this.state.unfinished) {
                 return (
                     <View style={tabSectionContainer}>
                         <FlatList
@@ -107,8 +118,19 @@ class Home extends Component {
                         />
                     </View>
                 );
+            } else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', }}>
+                            <ActivityIndicator size='large' color="#36175E" />
+                            <Text style={loadingText}>Wow ... It seems you have no mystery in progress!</Text>
+                        </View>
+                    </View>
+                );
             }
-            else if (this.state.tabIndex === 1) {
+        }
+        else if (this.state.tabIndex === 1) {
+            if (this.state.new) {
                 return (
                     <View style={tabSectionContainer}>
                         <FlatList
@@ -128,8 +150,19 @@ class Home extends Component {
                         />
                     </View>
                 );
+            } else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+                            <ActivityIndicator size='large' color="#36175E" />
+                            <Text style={loadingText}>Wait a bit, great mysteries await you!</Text>
+                        </View>
+                    </View>
+                );
             }
-            else {
+        }
+        else {
+            if (this.state.completed) {
                 return (
                     <View style={tabSectionContainer}>
                         <FlatList
@@ -149,13 +182,16 @@ class Home extends Component {
                         />
                     </View>
                 );
+            } else {
+                return (
+                    <View style={tabSectionContainer}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', }}>
+                            <ActivityIndicator size='large' color="#36175E" />
+                            <Text style={loadingText}>Wow ... It seems you have no mystery completed!</Text>
+                        </View>
+                    </View>
+                );
             }
-        } else {
-            return (
-                <View style={tabSectionContainer}>
-                    <ActivityIndicator size='large' color="#36175E" />
-                </View>
-            );
         }
     }
 
@@ -183,10 +219,34 @@ class Home extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    if (state.data.data.params) {
+        return {
+            data: state.data.data.params,
+            reload: state.reload ? state.reload.reload : false,
+            user: state.data.data.user
+        };
+    } else {
+        if ((state.reload && typeof state.reload !== 'object') || state.reload === null) {
+            return {
+                data: state.data.data,
+                reload: state.reload ? state.reload : false,
+                user: state.data.user
+            };
+        } else if (state.reload.reload === true || state.reload.reload === false) {
+            return {
+                data: state.data.data,
+                reload: state.reload.reload,
+                user: state.data.user
+            };
+        }
+    }
+};
+
 const styles = {
     tabSectionContainer: {
         backgroundColor: '#553285',
-        flex: 1
+        flex: 1,
     },
     buttonContainerIn: {
         backgroundColor: '#36175E',
@@ -212,29 +272,11 @@ const styles = {
         elevation: 2,
         flexDirection: 'row',
     },
-};
-
-const mapStateToProps = state => {
-    if (state.data.data.params) {
-        return {
-            data: state.data.data.params,
-            reload: state.reload ? state.reload.reload : false,
-            user: state.data.data.user
-        };
-    } else {
-        if ((state.reload && typeof state.reload !== 'object') || state.reload === null) {
-            return {
-                data: state.data.data,
-                reload: state.reload ? state.reload : false,
-                user: state.data.user
-            };
-        } else if (state.reload.reload === true || state.reload.reload === false) {
-            return {
-                data: state.data.data,
-                reload: state.reload.reload,
-                user: state.data.user
-            };
-        }
+    loadingText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'center'
     }
 };
 
