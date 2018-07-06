@@ -31,6 +31,7 @@ class MysteryCreator extends Component {
         } else {
             return (
                 <View>
+                    {this.displayError()}
                     <View style={styles.finalButtonContainer}>
                         <Button onPress={this.onClickCreate.bind(this)}>Create Mistery!</Button>
                     </View>
@@ -39,6 +40,20 @@ class MysteryCreator extends Component {
                     </View>
                 </View>
             );
+        }
+    }
+
+    componentDidMount() {
+        this.temporaryImageLoader();
+    }
+
+    temporaryImageLoader() {
+        this.setState({ image: 'https://firebasestorage.googleapis.com/v0/b/misterish-2078a.appspot.com/o/unimet-saman-excelencia.jpg?alt=media&token=b63e1db4-8ee7-47c7-900a-fc0b27bca06e' });
+    }
+
+    displayError() {
+        if (this.state.error) {
+            return <Text style={styles.errorText}>{this.state.errorMsg}</Text>;
         }
     }
 
@@ -84,36 +99,17 @@ class MysteryCreator extends Component {
     }
 
     loadOrImage() {
-        if (this.state.image === null) {
-            return (
-                <Button onPress={this.loadImage.bind(this)}>
-                    Select Image
-                </Button>
-            );
-        } else {
-            return (
-                <View
-                    style={{
-                        height: '15%',
-                        alignSelf: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginTop: '10%',
-                        width: '80%'
-                    }}
-                >
-                    <Text>
-                        style={{
-                            color: 'green',
-                            fontSize: 14,
-                            textAlign: 'center'
-                        }}
-                    >
-                        Image Successfully Loaded
-                    </Text>
-                </View>
-            );
-        }
+        return (
+            <Text
+                style={{
+                    color: 'green',
+                    fontSize: 14,
+                    textAlign: 'center'
+                }}
+            >
+                    Default Image Used (in development)
+            </Text>
+        );
     }
 
     mainOrCards() {
@@ -196,6 +192,10 @@ class MysteryCreator extends Component {
         this.setState({ cargando: true });
         for (let i = 0; i < this.state.clues.length; i++) {
             const clue = this.state.clues[i];
+            if (clue.type.length === 0 || clue.sol.length === 0 || clue.title.length === 0) {
+                this.setState({ error: true, errorMsg: `Empty field in ${(i + 1).toString()}` });
+                break;
+            }
         }
         // Si pasa todas las validaciones, aquí hay que llamar a la BD
     }
@@ -212,6 +212,7 @@ class MysteryCreator extends Component {
             clues: null,
             cargando: false
         });
+        this.temporaryImageLoader();
     }
 
     renderClueMaker(clue) {

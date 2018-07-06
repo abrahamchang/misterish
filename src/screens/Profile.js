@@ -81,6 +81,8 @@ class Profile extends Component {
     }
 
     componentWillMount() {
+        console.log('testing');
+        console.log(this.props.user);
         if (this.props.user) {
             this.setState({
                 username: this.props.user.username,
@@ -182,7 +184,7 @@ class Profile extends Component {
                 username={friends.username}
                 description={friends.description}
                 lvl={friends.lvl}
-                key={friends}
+                key={Math.floor(Math.random() * 1000)}
             />
         }
         );
@@ -366,6 +368,7 @@ const styles = {
 };
 
 const mapStateToProps = state => {
+    console.log(state);
     if (state.data.data.user) {
         return {
             user: state.data.data.user
